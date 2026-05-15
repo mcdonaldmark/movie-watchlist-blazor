@@ -11,8 +11,8 @@ This is a group project built using the .NET Blazor framework. The application w
 - Collaborate as a development team using GitHub and Trello
 
 ## 👥 Team Collaboration
-- GitHub Repository: (add link later)
-- Trello Board: (add link later)
+- GitHub Repository: https://github.com/mcdonaldmark/movie-watchlist-blazor
+- Trello Board: https://trello.com/b/2cr9WJfZ/ctrl-alt-elite
 
 ## ⚙️ Planned Features
 - Add movies to a watchlist
