@@ -1,0 +1,127 @@
+@using MovieWatchlist.Models
+@page "/dashboard"
+
+<h1 class="mb-4">🎬 My Movie Dashboard</h1>
+
+<!-- FILTER BAR -->
+<div class="row mb-3">
+    <div class="col-md-6">
+        <input class="form-control" placeholder="Search movies..." @bind="searchText" />
+    </div>
+
+    <div class="col-md-3">
+        <select class="form-select" @bind="selectedGenre">
+            <option value="">All Genres</option>
+            <option>Action</option>
+            <option>Drama</option>
+            <option>Sci-Fi</option>
+            <option>Comedy</option>
+            <option>Horror</option>
+        </select>
+    </div>
+
+    <div class="col-md-3 text-end">
+        <button class="btn btn-primary w-100">
+            + Add Movie
+        </button>
+    </div>
+</div>
+
+<!-- STATS CARDS -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm p-3 text-center">
+            <h5>🎥 Watchlist</h5>
+            <h2>@WatchlistCount</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm p-3 text-center">
+            <h5>✅ Watched</h5>
+            <h2>@WatchedCount</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm p-3 text-center">
+            <h5>⭐ Avg Rating</h5>
+            <h2>@AverageRating</h2>
+        </div>
+    </div>
+</div>
+
+<!-- MOVIE GRID -->
+<div class="row">
+    @foreach (var movie in FilteredMovies)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5>@movie.Title</h5>
+                    <p class="text-muted">@movie.Genre</p>
+
+                    <p style="font-size: 14px;">
+                        @movie.Description
+                    </p>
+
+                    <div class="mb-2">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= movie.Rating)
+                            {
+                                <span>⭐</span>
+                            }
+                            else
+                            {
+                                <span>☆</span>
+                            }
+                        }
+                    </div>
+
+                    @if (movie.IsWatched)
+                    {
+                        <span class="badge bg-success">Watched</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark">Watchlist</span>
+                    }
+
+                    <div class="mt-3 d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-primary">Edit</button>
+                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                        <button class="btn btn-sm btn-outline-success">
+                            @((movie.IsWatched) ? "Unwatch" : "Mark Watched")
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private string searchText = "";
+    private string selectedGenre = "";
+
+    private List<Movie> movies = new()
+    {
+        new Movie { Title = "Inception", Genre = "Sci-Fi", Description = "Dream heist thriller", Rating = 5, IsWatched = true },
+        new Movie { Title = "Interstellar", Genre = "Sci-Fi", Description = "Space exploration and time", Rating = 5, IsWatched
+= false },
+        new Movie { Title = "The Dark Knight", Genre = "Action", Description = "Batman vs Joker", Rating = 5, IsWatched = true
+},
+        new Movie { Title = "Toy Story", Genre = "Comedy", Description = "Animated classic", Rating = 4, IsWatched = false }
+    };
+
+    private IEnumerable<Movie> FilteredMovies =>
+        movies.Where(m =>
+            (string.IsNullOrEmpty(searchText) || m.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrEmpty(selectedGenre) || m.Genre == selectedGenre)
+        );
+
+    private int WatchlistCount => movies.Count(m => !m.IsWatched);
+    private int WatchedCount => movies.Count(m => m.IsWatched);
+    private double AverageRating => movies.Count == 0 ? 0 : movies.Average(m => m.Rating);
+}
