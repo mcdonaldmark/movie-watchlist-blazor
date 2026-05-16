@@ -1,9 +1,14 @@
 /* =========================
-   CINEMA DARK THEME (CLEAN)
+   CINEMA DARK THEME (MOBILE FIRST)
+========================= */
+
+/* =========================
+   BASE RESET
 ========================= */
 
 * {
     border: none !important;
+    box-sizing: border-box;
 }
 
 html,
@@ -13,10 +18,11 @@ body {
     background: #0b0c10 !important;
     color: #ffffff !important;
     font-family: Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
 }
 
 /* =========================
-   GLOBAL TEXT (SAFE + CONSISTENT)
+   GLOBAL TEXT
 ========================= */
 
 body {
@@ -33,7 +39,7 @@ small {
 }
 
 /* =========================
-   HEADINGS (NO BORDERS / NO LINES)
+   HEADINGS
 ========================= */
 
 h1,
@@ -45,52 +51,41 @@ h6 {
     color: #ffffff !important;
     margin: 0 0 12px 0 !important;
     padding: 0 !important;
-    border: none !important;
-    border-bottom: none !important;
-    box-shadow: none !important;
     background: transparent !important;
 }
 
 /* =========================
-   LINKS (NO UNDERLINES / NO BORDER LOOK)
+   LINKS
 ========================= */
 
 a {
     color: #ffcc00 !important;
     text-decoration: none !important;
-    border: none !important;
 }
 
 a:hover {
     color: #ffe066 !important;
-    text-decoration: none !important;
 }
 
 /* =========================
-   CARDS (CLEAN + MODERN)
+   CARDS
 ========================= */
 
 .card {
     background: #14161b !important;
     color: #ffffff !important;
-    border: none !important;
     border-radius: 12px;
     box-shadow: none !important;
+    transition: 0.2s ease;
 }
 
-.card-body {
-    color: #ffffff !important;
-}
-
-/* hover effect (soft glow, not border) */
 .card:hover {
     transform: translateY(-4px);
-    transition: 0.2s ease;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
 /* =========================
-   FORMS (REMOVE ALL BORDER LOOKS)
+   FORMS
 ========================= */
 
 input,
@@ -98,7 +93,6 @@ select,
 textarea {
     background-color: #1a1c22 !important;
     color: #ffffff !important;
-    border: none !important;
     outline: none !important;
     box-shadow: none !important;
 }
@@ -107,29 +101,8 @@ input::placeholder {
     color: #888 !important;
 }
 
-/* focus state WITHOUT border/glow */
-input:focus,
-select:focus,
-textarea:focus {
-    outline: none !important;
-    box-shadow: none !important;
-    border: none !important;
-}
-
 /* =========================
-   BOOTSTRAP TEXT FIXES
-========================= */
-
-.text-muted {
-    color: #cfcfcf !important;
-}
-
-.text-secondary {
-    color: #dcdcdc !important;
-}
-
-/* =========================
-   BUTTONS (NO OUTLINE BORDERS)
+   BUTTONS
 ========================= */
 
 .btn,
@@ -139,7 +112,7 @@ textarea:focus {
     outline: none !important;
 }
 
-/* primary button */
+/* primary */
 .btn-primary {
     background: #ffcc00 !important;
     border: none !important;
@@ -151,16 +124,14 @@ textarea:focus {
     background: #ffd633 !important;
 }
 
-/* outline button (NO BORDER FEEL) */
-.btn-outline-primary {
-    border: none !important;
-    color: #ffcc00 !important;
-    background: transparent !important;
+/* dashboard button */
+.btn-dashboard {
+    background-color: #4da3ff;
+    color: #ffffff;
 }
 
-.btn-outline-primary:hover {
-    background: #ffcc00 !important;
-    color: #111 !important;
+.btn-dashboard:hover {
+    background-color: #3b8ee6;
 }
 
 /* =========================
@@ -177,82 +148,41 @@ textarea:focus {
 }
 
 /* =========================
-   CENTERED LAYOUT HELPERS
+   LAYOUT (MOBILE FIRST)
 ========================= */
-
-.page-center {
-    min-height: calc(100vh - 80px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.page-card {
-    width: 100%;
-    max-width: 700px;
-    padding: 32px;
-}
-
-.auth-card {
-    width: 100%;
-    max-width: 420px;
-    padding: 32px;
-}
-
-.dashboard-wrapper {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding-top: 50px;
-    padding-bottom: 60px;
-}
-
-.page-card,
-.auth-card,
-.page-center {
-    border: none !important;
-    box-shadow: none !important;
-    outline: none !important;
-    background: transparent !important;
-}
-
-/* specifically kill any accidental heading framing */
-h1 {
-    border: none !important;
-    box-shadow: none !important;
-    outline: none !important;
-    background: transparent !important;
-}
 
 .app-shell {
     display: flex;
+    flex-direction: column;
+    /* MOBILE DEFAULT */
     min-height: 100vh;
 }
 
-/* Sidebar */
+/* sidebar becomes top bar on mobile */
 .sidebar {
-    width: 220px;
+    width: 100%;
     background: #14161b;
-    padding: 20px;
+    padding: 12px 16px;
     display: flex;
     flex-direction: column;
 }
 
 .brand {
-    color: white;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
+/* nav becomes row on mobile */
 .nav-links {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
+/* nav items */
 .nav-links a {
     color: #eaeaea;
-    text-decoration: none;
-    padding: 8px;
+    padding: 8px 10px;
     border-radius: 6px;
 }
 
@@ -260,72 +190,140 @@ h1 {
     background: #2a2d35;
 }
 
-/* Main content */
-.main-content {
-    flex: 1;
-    padding: 20px;
-}
-
+/* logout button */
 .nav-link-button {
-    display: block;
-    width: 100%;
-    text-align: left;
-    padding: 10px;
     background: transparent;
-    border: none;
-    color: #ffffff;
-    /* MATCH SIDEBAR LINK COLOR */
-    border-radius: 8px;
+    color: #eaeaea;
+    padding: 8px 10px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
 }
 
 .nav-link-button:hover {
-    background: #2a2d36;
-    color: #ffffff;
+    background: #2a2d35;
 }
 
-.sidebar {
-    padding: 20px;
+/* main content */
+.main-content {
+    flex: 1;
+    padding: 12px;
 }
 
-.brand {
-    margin-bottom: 18px;
-}
+/* =========================
+   PAGE HELPERS
+========================= */
 
-.sidebar-divider {
-    height: 10px;
-}
-
-.nav-links {
+.page-center {
+    min-height: calc(100vh - 80px);
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: center;
+    padding: 16px;
 }
 
-.nav-link {
+.dashboard-wrapper {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 12px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 24px;
+}
+
+/* movies title spacing fix */
+.movies-page h1 {
+    margin-top: 0 !important;
+    margin-bottom: 24px !important;
+}
+
+/* =========================
+   TABLET / DESKTOP OVERRIDES
+========================= */
+
+@media (min-width: 768px) {
+
+    .app-shell {
+        flex-direction: row;
+    }
+
+    .sidebar {
+        width: 220px;
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+
+    .page-center {
+        align-items: center;
+    }
+
+    .dashboard-wrapper {
+        padding-top: 50px;
+        padding-bottom: 60px;
+    }
+
+    .movies-page h1 {
+        margin-bottom: 60px !important;
+    }
+}
+
+/* =========================
+   FORCE WHITE TEXT (AUTH + HOME SAFETY NET)
+========================= */
+
+body,
+html {
+    color: #ffffff !important;
+}
+
+/* everything inside auth pages */
+.page-center,
+.auth-card,
+.page-card {
+    color: #ffffff !important;
+}
+
+/* inputs + labels + placeholders */
+input,
+textarea,
+select,
+label {
+    color: #ffffff !important;
+}
+
+/* placeholder fix */
+input::placeholder,
+textarea::placeholder {
+    color: #9a9a9a !important;
+}
+
+/* links (login/register/home) */
+a {
     color: #ffcc00 !important;
-    text-decoration: none;
-    padding: 6px 10px;
-    border-radius: 6px;
-    display: block;
 }
 
-.nav-link:hover {
-    background: rgba(255, 204, 0, 0.1);
+a:hover {
+    color: #ffe066 !important;
 }
 
-.nav-link.active {
-    font-weight: bold;
-    background: rgba(255, 204, 0, 0.15);
+/* ensure bootstrap doesn't override text */
+.text-muted {
+    color: #cfcfcf !important;
 }
 
-/* logout looks identical but slightly emphasized */
-.logout {
-    margin-top: 6px;
-}
-
-.brand-spacing {
-    height: 22px;
-    /* adjust this number if you want more/less space */
+.text-dark {
+    color: #ffffff !important;
 }

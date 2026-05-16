@@ -1,21 +1,41 @@
 @page "/register"
+@rendermode InteractiveServer
+@inject NavigationManager NavManager
 
 <div class="page-center">
     <div class="auth-card">
 
-        <h2>Register</h2>
+        <h2 style="border:none !important; box-shadow:none !important; margin-top:0;">
+            Register
+        </h2>
 
         <div class="mt-3">
-            <input class="form-control mb-2" placeholder="Name" />
-            <input class="form-control mb-2" placeholder="Email" />
-            <input class="form-control mb-3" placeholder="Password" type="password" />
+            <input id="name" name="name" class="form-control mb-2" placeholder="Name" />
 
-            <button class="btn btn-primary w-100">Create Account</button>
+            <input id="email" name="email" class="form-control mb-2" placeholder="Email" />
+
+            <input id="password" name="password" type="password" class="form-control mb-3" placeholder="Password" />
+
+            <button type="button" class="btn btn-primary w-100">
+                Create Account
+            </button>
         </div>
 
-        <p class="mt-3 text-muted">
+        <p class="mt-3 mb-1 text-muted">
             Already have an account? <a href="/login">Login</a>
         </p>
 
+        <!-- RETURN HOME BUTTON -->
+        <button type="button" class="btn btn-outline-light w-100 mt-1" @onclick="GoHome">
+            Return to Home
+        </button>
+
     </div>
 </div>
+
+@code {
+    private void GoHome()
+    {
+        NavManager.NavigateTo("/");
+    }
+}

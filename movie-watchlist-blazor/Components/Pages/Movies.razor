@@ -3,10 +3,10 @@
 @using movie_watchlist_blazor.Services
 @inject NavigationManager NavManager
 
-<div class="page-center">
+<div class="page-center movies-page">
     <div class="dashboard-wrapper w-100">
 
-        <h3 class="mb-4 text-center">🎬 Movies</h3>
+        <h1 class="mb-5 text-center movie-page-title">🎬 Movies</h1>
 
         @if (MovieState.Movies == null)
         {
@@ -22,14 +22,13 @@
 
                         <div class="card p-3 shadow-sm">
 
-                            <!-- CLICKABLE TITLE (NEW) -->
                             <h5 style="cursor:pointer;" @onclick="() => GoToMovie(movie.Id)">
                                 @movie.Title
                             </h5>
 
                             <p class="text-muted">@movie.Genre • @movie.Year</p>
 
-                            <!-- STAR RATING -->
+                            <!-- STARS -->
                             <div class="mb-2">
                                 @for (int i = 1; i <= 5; i++)
                                 {
@@ -40,7 +39,7 @@
                             </div>
 
                             <!-- WATCHED STATUS -->
-                            @if (MovieState.WatchedMovieIds.Contains(movie.Id))
+                            @if (MovieState.IsWatched(movie.Id))
                             {
                                 <span class="badge bg-success mb-2">Watched</span>
                             }
@@ -52,15 +51,26 @@
                             <!-- ACTIONS -->
                             <div class="d-flex gap-2 mt-2">
 
-                                <button class="btn btn-success btn-sm w-100" @onclick="() => ToggleWatched(movie.Id)">
-                                    @(MovieState.WatchedMovieIds.Contains(movie.Id) ? "Unwatch" : "Watch")
+                                <button class="btn btn-sm btn-success w-100" @onclick="() => ToggleWatched(movie.Id)">
+                                    @(MovieState.IsWatched(movie.Id) ? "Unwatch" : "Watch")
                                 </button>
 
-                                <button class="btn btn-primary btn-sm w-100" @onclick="() => GoToReviews(movie.Id)">
+                                <button class="btn btn-sm btn-primary w-100" @onclick="() => GoToReviews(movie.Id)">
                                     Reviews
                                 </button>
 
+                                <button class="btn btn-sm btn-dashboard w-100" @onclick="() => AddToDashboard(movie.Id)">
+                                    Add to Dashboard
+                                </button>
+
                             </div>
+
+                            @if (addedMovieId == movie.Id)
+                            {
+                                <div class="mt-2 text-success fw-bold">
+                                    Added successfully ✅
+                                </div>
+                            }
 
                         </div>
 
@@ -75,12 +85,25 @@
 
 @code {
 
+    private int? addedMovieId;
+
     private void ToggleWatched(int id)
     {
-        if (MovieState.WatchedMovieIds.Contains(id))
-            MovieState.WatchedMovieIds.Remove(id);
-        else
-            MovieState.WatchedMovieIds.Add(id);
+        MovieState.ToggleWatched(id);
+    }
+
+    private void AddToDashboard(int id)
+    {
+        MovieState.ToggleWatched(id);
+
+        addedMovieId = id;
+
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(2000);
+            addedMovieId = null;
+            await InvokeAsync(StateHasChanged);
+        });
     }
 
     private void GoToReviews(int movieId)

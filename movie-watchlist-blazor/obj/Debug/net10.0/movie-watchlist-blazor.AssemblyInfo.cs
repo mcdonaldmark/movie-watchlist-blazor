@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("movie-watchlist-blazor")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f44222add5c4f0abc30bc5fd87a2d159a2265bb5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+563abc3c38ed0407affbda73b0b1f6e72fdc1999")]
 [assembly: System.Reflection.AssemblyProductAttribute("movie-watchlist-blazor")]
 [assembly: System.Reflection.AssemblyTitleAttribute("movie-watchlist-blazor")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
