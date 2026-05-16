@@ -1,11 +1,3 @@
-/* =========================
-   CINEMA DARK THEME (MOBILE FIRST)
-========================= */
-
-/* =========================
-   BASE RESET
-========================= */
-
 * {
     border: none !important;
     box-sizing: border-box;
@@ -21,10 +13,6 @@ body {
     overflow-x: hidden;
 }
 
-/* =========================
-   GLOBAL TEXT
-========================= */
-
 body {
     color: #ffffff !important;
 }
@@ -38,10 +26,6 @@ small {
     color: #eaeaea !important;
 }
 
-/* =========================
-   HEADINGS
-========================= */
-
 h1,
 h2,
 h3,
@@ -54,10 +38,6 @@ h6 {
     background: transparent !important;
 }
 
-/* =========================
-   LINKS
-========================= */
-
 a {
     color: #ffcc00 !important;
     text-decoration: none !important;
@@ -66,10 +46,6 @@ a {
 a:hover {
     color: #ffe066 !important;
 }
-
-/* =========================
-   CARDS
-========================= */
 
 .card {
     background: #14161b !important;
@@ -84,10 +60,6 @@ a:hover {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
-/* =========================
-   FORMS
-========================= */
-
 input,
 select,
 textarea {
@@ -101,10 +73,6 @@ input::placeholder {
     color: #888 !important;
 }
 
-/* =========================
-   BUTTONS
-========================= */
-
 .btn,
 .btn:focus,
 .btn:active {
@@ -112,7 +80,6 @@ input::placeholder {
     outline: none !important;
 }
 
-/* primary */
 .btn-primary {
     background: #ffcc00 !important;
     border: none !important;
@@ -124,7 +91,6 @@ input::placeholder {
     background: #ffd633 !important;
 }
 
-/* dashboard button */
 .btn-dashboard {
     background-color: #4da3ff;
     color: #ffffff;
@@ -133,10 +99,6 @@ input::placeholder {
 .btn-dashboard:hover {
     background-color: #3b8ee6;
 }
-
-/* =========================
-   BADGES
-========================= */
 
 .badge.bg-success {
     background: #2ecc71 !important;
@@ -147,10 +109,6 @@ input::placeholder {
     color: #111 !important;
 }
 
-/* =========================
-   LAYOUT (MOBILE FIRST)
-========================= */
-
 .app-shell {
     display: flex;
     flex-direction: column;
@@ -158,7 +116,6 @@ input::placeholder {
     min-height: 100vh;
 }
 
-/* sidebar becomes top bar on mobile */
 .sidebar {
     width: 100%;
     background: #14161b;
@@ -171,7 +128,6 @@ input::placeholder {
     margin-bottom: 10px;
 }
 
-/* nav becomes row on mobile */
 .nav-links {
     display: flex;
     flex-direction: row;
@@ -179,7 +135,6 @@ input::placeholder {
     gap: 10px;
 }
 
-/* nav items */
 .nav-links a {
     color: #eaeaea;
     padding: 8px 10px;
@@ -190,7 +145,6 @@ input::placeholder {
     background: #2a2d35;
 }
 
-/* logout button */
 .nav-link-button {
     background: transparent;
     color: #eaeaea;
@@ -203,15 +157,10 @@ input::placeholder {
     background: #2a2d35;
 }
 
-/* main content */
 .main-content {
     flex: 1;
     padding: 12px;
 }
-
-/* =========================
-   PAGE HELPERS
-========================= */
 
 .page-center {
     min-height: calc(100vh - 80px);
@@ -235,15 +184,10 @@ input::placeholder {
     padding: 24px;
 }
 
-/* movies title spacing fix */
 .movies-page h1 {
     margin-top: 0 !important;
     margin-bottom: 24px !important;
 }
-
-/* =========================
-   TABLET / DESKTOP OVERRIDES
-========================= */
 
 @media (min-width: 768px) {
 
@@ -280,23 +224,17 @@ input::placeholder {
     }
 }
 
-/* =========================
-   FORCE WHITE TEXT (AUTH + HOME SAFETY NET)
-========================= */
-
 body,
 html {
     color: #ffffff !important;
 }
 
-/* everything inside auth pages */
 .page-center,
 .auth-card,
 .page-card {
     color: #ffffff !important;
 }
 
-/* inputs + labels + placeholders */
 input,
 textarea,
 select,
@@ -304,13 +242,11 @@ label {
     color: #ffffff !important;
 }
 
-/* placeholder fix */
 input::placeholder,
 textarea::placeholder {
     color: #9a9a9a !important;
 }
 
-/* links (login/register/home) */
 a {
     color: #ffcc00 !important;
 }
@@ -319,7 +255,6 @@ a:hover {
     color: #ffe066 !important;
 }
 
-/* ensure bootstrap doesn't override text */
 .text-muted {
     color: #cfcfcf !important;
 }

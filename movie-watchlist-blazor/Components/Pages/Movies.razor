@@ -28,7 +28,6 @@
 
                             <p class="text-muted">@movie.Genre • @movie.Year</p>
 
-                            <!-- STARS -->
                             <div class="mb-2">
                                 @for (int i = 1; i <= 5; i++)
                                 {
@@ -38,7 +37,6 @@
                                 }
                             </div>
 
-                            <!-- WATCHED STATUS -->
                             @if (MovieState.IsWatched(movie.Id))
                             {
                                 <span class="badge bg-success mb-2">Watched</span>
