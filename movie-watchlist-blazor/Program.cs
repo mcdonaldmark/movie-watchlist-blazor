@@ -9,6 +9,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped<IMovieService, MockMovieService>();
 
+builder.Services.AddSingleton<AppState>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

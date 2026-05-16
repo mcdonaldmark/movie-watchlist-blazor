@@ -1,7 +1,57 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager NavManager
 
-<div class="page">
-    <main class="content">
+<div class="app-shell">
+
+    @if (ShowSidebar)
+    {
+        <div class="sidebar">
+
+            <h4 class="brand">🎬 Movie App</h4>
+
+            <div class="brand-spacing"></div>
+
+            <nav class="nav-links">
+
+                <NavLink href="/dashboard" class="nav-link">
+                    🏠 Dashboard
+                </NavLink>
+
+                <NavLink href="/movies" class="nav-link">
+                    🎥 Movies
+                </NavLink>
+
+                <NavLink href="#" class="nav-link logout" @onclick="Logout">
+                    🚪 Logout
+                </NavLink>
+
+            </nav>
+
+        </div>
+    }
+
+    <div class="main-content">
         @Body
-    </main>
+    </div>
+
 </div>
+
+@code {
+
+    private bool ShowSidebar => !IsAuthPage();
+
+    private bool IsAuthPage()
+    {
+        var uri = NavManager.Uri.ToLower();
+
+        return uri.Contains("/login")
+            || uri.Contains("/register")
+            || uri.EndsWith("/")
+            || uri.EndsWith("/home");
+    }
+
+    private void Logout()
+    {
+        NavManager.NavigateTo("/login");
+    }
+}
