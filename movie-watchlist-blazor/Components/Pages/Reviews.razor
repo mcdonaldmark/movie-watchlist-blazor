@@ -1,32 +1,84 @@
-@page "/reviews"
+@page "/reviews/{MovieId:int}"
+@using movie_watchlist_blazor.Models
+@using movie_watchlist_blazor.Services
+@inject IMovieService MovieService
 
 <div class="page-center">
     <div class="dashboard-wrapper w-100">
 
         <h3 class="mb-4 text-center">⭐ Reviews</h3>
 
-        @if (!movies.Any())
+        @if (movie == null)
         {
-            <p class="text-center">No movies to review.</p>
+            <p class="text-center">Loading...</p>
         }
         else
         {
-            @foreach (var movie in movies)
+            <!-- MOVIE HEADER -->
+            <div class="card p-3 mb-4 shadow-sm">
+                <h5>@movie.Title</h5>
+                <p class="text-muted">@movie.Genre • @movie.Year</p>
+            </div>
+
+            <!-- CREATE REVIEW -->
+            <div class="card p-3 mb-4 shadow-sm">
+                <h5>Add Review</h5>
+
+                <textarea class="form-control mb-2" placeholder="Write review..." @bind="newReview.Comment"></textarea>
+
+                <input class="form-control mb-2" type="number" min="1" max="5" @bind="newReview.Rating" />
+
+                <button class="btn btn-success w-100" @onclick="AddReview">
+                    Submit
+                </button>
+            </div>
+
+            <!-- REVIEWS LIST -->
+            @if (!reviews.Any())
             {
-                <div class="card p-3 mb-3 shadow-sm">
+                <p class="text-center">No reviews yet.</p>
+            }
+            else
+            {
+                @foreach (var r in reviews)
+                {
+                    <div class="card p-3 mb-3 shadow-sm">
 
-                    <h5>@movie.Title</h5>
+                        @if (editingReviewId == r.Id)
+                        {
+                            <textarea class="form-control mb-2" @bind="editModel.Comment"></textarea>
 
-                    <label>Rating (1–5)</label>
-                    <input type="number" min="1" max="5" class="form-control mb-2" @bind="movie.Rating" />
+                            <input class="form-control mb-2" type="number" min="1" max="5" @bind="editModel.Rating" />
 
-                    <textarea class="form-control mb-2" placeholder="Write a review..." @bind="movie.Review"></textarea>
+                            <button class="btn btn-primary btn-sm me-2" @onclick="() => SaveEdit(r.Id)">
+                                Save
+                            </button>
 
-                    <button class="btn btn-success btn-sm" @onclick="() => Save(movie)">
-                        Save Review
-                    </button>
+                            <button class="btn btn-secondary btn-sm" @onclick="CancelEdit">
+                                Cancel
+                            </button>
+                        }
+                        else
+                        {
+                            <strong>@r.UserName</strong>
+                            <p>@r.Comment</p>
+                            <div>⭐ @r.Rating</div>
 
-                </div>
+                            <div class="mt-2 d-flex gap-2">
+
+                                <button class="btn btn-warning btn-sm" @onclick="() => StartEdit(r)">
+                                    Edit
+                                </button>
+
+                                <button class="btn btn-danger btn-sm" @onclick="() => Delete(r.Id)">
+                                    Delete
+                                </button>
+
+                            </div>
+                        }
+
+                    </div>
+                }
             }
         }
 
@@ -34,25 +86,62 @@
 </div>
 
 @code {
-    private List<Movie> movies = WatchedStore.WatchedMovies;
 
-    void Save(Movie movie)
+    [Parameter] public int MovieId { get; set; }
+
+    private MovieDto? movie;
+    private List<ReviewDto> reviews = new();
+
+    private ReviewDto newReview = new();
+
+    private int? editingReviewId;
+    private ReviewDto editModel = new();
+
+    protected override async Task OnInitializedAsync()
     {
-        // already bound, so just refresh UI
+        var movies = await MovieService.GetMoviesAsync();
+        movie = movies.FirstOrDefault(m => m.Id == MovieId);
+
+        reviews = await MovieService.GetReviewsAsync(MovieId);
     }
 
-    public class Movie
+    private async Task AddReview()
     {
-        public string Title { get; set; } = "";
-        public string Genre { get; set; } = "";
-        public int Year { get; set; }
+        await MovieService.AddReviewAsync(MovieId, newReview);
 
-        public int Rating { get; set; }
-        public string Review { get; set; } = "";
+        newReview = new ReviewDto();
+        reviews = await MovieService.GetReviewsAsync(MovieId);
     }
 
-    public static class WatchedStore
+    private void StartEdit(ReviewDto review)
     {
-        public static List<Movie> WatchedMovies { get; set; } = new();
+        editingReviewId = review.Id;
+        editModel = new ReviewDto
+        {
+            Id = review.Id,
+            Comment = review.Comment,
+            Rating = review.Rating
+        };
+    }
+
+    private async Task SaveEdit(int reviewId)
+    {
+        editModel.Id = reviewId;
+
+        await MovieService.UpdateReviewAsync(MovieId, editModel);
+
+        editingReviewId = null;
+        reviews = await MovieService.GetReviewsAsync(MovieId);
+    }
+
+    private void CancelEdit()
+    {
+        editingReviewId = null;
+    }
+
+    private async Task Delete(int reviewId)
+    {
+        await MovieService.DeleteReviewAsync(MovieId, reviewId);
+        reviews = await MovieService.GetReviewsAsync(MovieId);
     }
 }

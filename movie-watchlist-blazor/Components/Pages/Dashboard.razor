@@ -1,5 +1,7 @@
 @page "/dashboard"
 @using movie_watchlist_blazor.Models
+@using movie_watchlist_blazor.Services
+@inject NavigationManager NavManager
 
 <div class="dashboard-wrapper">
 
@@ -12,7 +14,7 @@
             </p>
         </div>
 
-        <button class="btn btn-primary">
+        <button type="button" class="btn btn-primary" @onclick="GoToMovies">
             + Add Movie
         </button>
     </div>
@@ -37,26 +39,21 @@
 
     <!-- STATS -->
     <div class="row mb-4">
-        <div class="col-md-4 mb-2">
+
+        <div class="col-md-6 mb-2">
             <div class="card p-3 text-center">
-                <h6>🎥 Watchlist</h6>
-                <h3>@WatchlistCount</h3>
+                <h6>🎬 Total Movies</h6>
+                <h3>@MovieState.Movies.Count</h3>
             </div>
         </div>
 
-        <div class="col-md-4 mb-2">
+        <div class="col-md-6 mb-2">
             <div class="card p-3 text-center">
-                <h6>✅ Watched</h6>
-                <h3>@WatchedCount</h3>
+                <h6>📊 Watched Status</h6>
+                <h3>@MovieState.WatchedMovieIds.Count / @MovieState.Movies.Count Watched</h3>
             </div>
         </div>
 
-        <div class="col-md-4 mb-2">
-            <div class="card p-3 text-center">
-                <h6>⭐ Avg Rating</h6>
-                <h3>@AverageRating.ToString("0.0")</h3>
-            </div>
-        </div>
     </div>
 
     <!-- MOVIE GRID -->
@@ -70,57 +67,44 @@
 
                     <h5 class="mb-1">@movie.Title</h5>
 
-                    <small class="text-muted">@movie.Genre</small>
-
-                    <p class="mt-2 mb-2">
-                        @movie.Description
-                    </p>
+                    <small class="text-muted">
+                        @movie.Genre • @movie.Year
+                    </small>
 
                     <!-- STAR RATING -->
-                    <div class="mb-2">
+                    <div class="mt-2 mb-2">
                         @for (int i = 1; i <= 5; i++)
                         {
-                            if (i <= movie.Rating)
-                            {
-                                <span>⭐</span>
-                            }
-                            else
-                            {
-                                <span class="text-muted">☆</span>
-                            }
+                            <span>
+                                @(i <= Math.Round(movie.AverageRating) ? "⭐" : "☆")
+                            </span>
                         }
                     </div>
 
-                    <!-- STATUS -->
-                    @if (movie.IsWatched)
+                    <!-- WATCHED BADGE -->
+                    @if (MovieState.WatchedMovieIds.Contains(movie.Id))
                     {
-                        <span class="badge bg-success mb-2">Watched</span>
+                        <span class="badge bg-success">Watched</span>
                     }
                     else
                     {
-                        <span class="badge bg-warning text-dark mb-2">Watchlist</span>
+                        <span class="badge bg-warning text-dark">Not Watched</span>
                     }
 
-                    <!-- ACTIONS -->
-                    <div class="d-flex gap-2 mt-2">
-                        <button class="btn btn-sm btn-outline-primary w-100">
-                            Edit
-                        </button>
-
-                        <button class="btn btn-sm btn-outline-danger w-100">
-                            Delete
-                        </button>
-
-                        <button class="btn btn-sm btn-outline-success w-100">
-                            @(movie.IsWatched ? "Unwatch" : "Watched")
+                    <!-- ACTION -->
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-success w-100" @onclick="() => ToggleWatched(movie.Id)">
+                            @(MovieState.WatchedMovieIds.Contains(movie.Id) ? "Unwatch" : "Mark Watched")
                         </button>
                     </div>
 
                 </div>
+
             </div>
         }
 
     </div>
+
 </div>
 
 @code {
@@ -128,27 +112,28 @@
     private string searchText = "";
     private string selectedGenre = "";
 
-    private List<Movie> movies = new()
-    {
-        new Movie { Title = "Inception", Genre = "Sci-Fi", Description = "Dream heist thriller", Rating = 5, IsWatched = true },
-        new Movie { Title = "Interstellar", Genre = "Sci-Fi", Description = "Space exploration and time", Rating = 5, IsWatched
-= false },
-        new Movie { Title = "The Dark Knight", Genre = "Action", Description = "Batman vs Joker", Rating = 5, IsWatched = true
-},
-        new Movie { Title = "Toy Story", Genre = "Comedy", Description = "Animated classic", Rating = 4, IsWatched = false }
-    };
-
-    private IEnumerable<Movie> FilteredMovies =>
-        movies.Where(m =>
+    private IEnumerable<MovieDto> FilteredMovies =>
+        MovieState.Movies.Where(m =>
             (string.IsNullOrWhiteSpace(searchText) ||
              m.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase)) &&
             (string.IsNullOrWhiteSpace(selectedGenre) ||
              m.Genre == selectedGenre)
         );
 
-    private int WatchlistCount => movies.Count(m => !m.IsWatched);
-    private int WatchedCount => movies.Count(m => m.IsWatched);
+    private void ToggleWatched(int id)
+    {
+        if (MovieState.WatchedMovieIds.Contains(id))
+        {
+            MovieState.WatchedMovieIds.Remove(id);
+        }
+        else
+        {
+            MovieState.WatchedMovieIds.Add(id);
+        }
+    }
 
-    private double AverageRating =>
-        movies.Count == 0 ? 0 : movies.Average(m => m.Rating);
+    private void GoToMovies()
+    {
+        NavManager.NavigateTo("/movies");
+    }
 }
