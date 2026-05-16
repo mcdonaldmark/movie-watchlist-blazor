@@ -1,0 +1,123 @@
+@page "/movies"
+
+<div class="page-center">
+    <div class="dashboard-wrapper w-100">
+
+        <h3 class="mb-4 text-center">🎬 Movies</h3>
+
+        <div class="row justify-content-center">
+
+            <!-- Add Movie -->
+            <div class="col-md-4 mb-3">
+                <div class="card p-3 shadow-sm">
+
+                    <h5 class="text-center">Add Movie</h5>
+
+                    <input class="form-control mb-2" placeholder="Title" @bind="newMovie.Title" />
+                    <input class="form-control mb-2" placeholder="Genre" @bind="newMovie.Genre" />
+                    <input class="form-control mb-2" placeholder="Year" type="number" @bind="newMovie.Year" />
+
+                    <button class="btn btn-primary w-100" @onclick="AddMovie">
+                        Add to Watchlist
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Movie List -->
+        <div class="row justify-content-center">
+
+            <div class="col-md-8">
+
+                @if (movies == null)
+                {
+                    <p class="text-center">Loading movies...</p>
+                }
+                else if (!movies.Any())
+                {
+                    <p class="text-center">No movies added yet.</p>
+                }
+                else
+                {
+                    @foreach (var movie in movies)
+                    {
+                        <div class="card p-3 mb-3 shadow-sm">
+
+                            <div class="d-flex justify-content-between">
+                                <h5>@movie.Title</h5>
+                                <span class="text-muted">@movie.Year</span>
+                            </div>
+
+                            <p>@movie.Genre</p>
+
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-success w-100" @onclick="() => MarkWatched(movie)">
+                                    Mark Watched
+                                </button>
+
+                                <button class="btn btn-sm btn-outline-danger w-100" @onclick="() => Remove(movie)">
+                                    Remove
+                                </button>
+                            </div>
+
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    private List<Movie> movies = new();
+    private Movie newMovie = new();
+
+    protected override void OnInitialized()
+    {
+        movies = new List<Movie>();
+    }
+
+    void AddMovie()
+    {
+        movies.Add(new Movie
+        {
+            Title = newMovie.Title,
+            Genre = newMovie.Genre,
+            Year = newMovie.Year
+        });
+
+        newMovie = new Movie();
+    }
+
+    void Remove(Movie movie)
+    {
+        movies.Remove(movie);
+    }
+
+    void MarkWatched(Movie movie)
+    {
+        movies.Remove(movie);
+        WatchedStore.Add(movie);
+    }
+
+    public class Movie
+    {
+        public string Title { get; set; } = "";
+        public string Genre { get; set; } = "";
+        public int Year { get; set; }
+    }
+
+    public static class WatchedStore
+    {
+        public static List<Movie> WatchedMovies { get; set; } = new();
+
+        public static void Add(Movie movie)
+        {
+            WatchedMovies.Add(movie);
+        }
+    }
+}

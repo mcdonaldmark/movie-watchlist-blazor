@@ -1,0 +1,58 @@
+@page "/reviews"
+
+<div class="page-center">
+    <div class="dashboard-wrapper w-100">
+
+        <h3 class="mb-4 text-center">⭐ Reviews</h3>
+
+        @if (!movies.Any())
+        {
+            <p class="text-center">No movies to review.</p>
+        }
+        else
+        {
+            @foreach (var movie in movies)
+            {
+                <div class="card p-3 mb-3 shadow-sm">
+
+                    <h5>@movie.Title</h5>
+
+                    <label>Rating (1–5)</label>
+                    <input type="number" min="1" max="5" class="form-control mb-2" @bind="movie.Rating" />
+
+                    <textarea class="form-control mb-2" placeholder="Write a review..." @bind="movie.Review"></textarea>
+
+                    <button class="btn btn-success btn-sm" @onclick="() => Save(movie)">
+                        Save Review
+                    </button>
+
+                </div>
+            }
+        }
+
+    </div>
+</div>
+
+@code {
+    private List<Movie> movies = WatchedStore.WatchedMovies;
+
+    void Save(Movie movie)
+    {
+        // already bound, so just refresh UI
+    }
+
+    public class Movie
+    {
+        public string Title { get; set; } = "";
+        public string Genre { get; set; } = "";
+        public int Year { get; set; }
+
+        public int Rating { get; set; }
+        public string Review { get; set; } = "";
+    }
+
+    public static class WatchedStore
+    {
+        public static List<Movie> WatchedMovies { get; set; } = new();
+    }
+}

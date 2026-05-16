@@ -30,12 +30,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xEYXNoYm9hcmQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/marka/Desktop/BYUI/Semester 3/Term 3/CSE 325/movie-watchlist-blazor/movie-watchlist-blazor/Components/Pages/Home.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/marka/Desktop/BYUI/Semester 3/Term 3/CSE 325/movie-watchlist-blazor/movie-watchlist-blazor/Components/Pages/Login.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xMb2dpbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/marka/Desktop/BYUI/Semester 3/Term 3/CSE 325/movie-watchlist-blazor/movie-watchlist-blazor/Components/Pages/Movies.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xNb3ZpZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/marka/Desktop/BYUI/Semester 3/Term 3/CSE 325/movie-watchlist-blazor/movie-watchlist-blazor/Components/Pages/NotFound.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xOb3RGb3VuZC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/marka/Desktop/BYUI/Semester 3/Term 3/CSE 325/movie-watchlist-blazor/movie-watchlist-blazor/Components/Pages/Register.razor]

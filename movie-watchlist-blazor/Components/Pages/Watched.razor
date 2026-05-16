@@ -1,0 +1,51 @@
+@page "/watched"
+
+<div class="page-center">
+    <div class="dashboard-wrapper w-100">
+
+        <h3 class="mb-4 text-center">✔ Watched Movies</h3>
+
+        @if (!WatchedStore.WatchedMovies.Any())
+        {
+            <p class="text-center">No watched movies yet.</p>
+        }
+        else
+        {
+            @foreach (var movie in WatchedStore.WatchedMovies)
+            {
+                <div class="card p-3 mb-3 shadow-sm">
+
+                    <h5>@movie.Title</h5>
+                    <p>@movie.Genre (@movie.Year)</p>
+
+                    <div class="text-end">
+                        <button class="btn btn-sm btn-danger" @onclick="() => Remove(movie)">
+                            Remove
+                        </button>
+                    </div>
+
+                </div>
+            }
+        }
+
+    </div>
+</div>
+
+@code {
+    void Remove(Movie movie)
+    {
+        WatchedStore.WatchedMovies.Remove(movie);
+    }
+
+    public class Movie
+    {
+        public string Title { get; set; } = "";
+        public string Genre { get; set; } = "";
+        public int Year { get; set; }
+    }
+
+    public static class WatchedStore
+    {
+        public static List<Movie> WatchedMovies { get; set; } = new();
+    }
+}

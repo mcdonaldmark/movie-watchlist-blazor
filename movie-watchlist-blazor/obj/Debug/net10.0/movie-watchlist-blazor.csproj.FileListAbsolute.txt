@@ -24,7 +24,6 @@ C:\Users\marka\Desktop\BYUI\Semester 3\Term 3\CSE 325\movie-watchlist-blazor\mov
 C:\Users\marka\Desktop\BYUI\Semester 3\Term 3\CSE 325\movie-watchlist-blazor\movie-watchlist-blazor\obj\Debug\net10.0\scopedcss\Components\Layout\ReconnectModal.razor.rz.scp.css
 C:\Users\marka\Desktop\BYUI\Semester 3\Term 3\CSE 325\movie-watchlist-blazor\movie-watchlist-blazor\obj\Debug\net10.0\scopedcss\bundle\movie-watchlist-blazor.styles.css
 C:\Users\marka\Desktop\BYUI\Semester 3\Term 3\CSE 325\movie-watchlist-blazor\movie-watchlist-blazor\obj\Debug\net10.0\scopedcss\projectbundle\movie-watchlist-blazor.bundle.scp.css
-C:\Users\marka\Desktop\BYUI\Semester 3\Term 3\CSE 325\movie-watchlist-blazor\movie-watchlist-blazor\obj\Debug\net10.0\compressed\310kfgb06h-{0}-khy4lop6wu-khy4lop6wu.gz
 C:\Users\marka\Desktop\BYUI\Semester 3\Term 3\CSE 325\movie-watchlist-blazor\movie-watchlist-blazor\obj\Debug\net10.0\compressed\1szto8ogmu-{0}-bqjiyaj88i-bqjiyaj88i.gz
 C:\Users\marka\Desktop\BYUI\Semester 3\Term 3\CSE 325\movie-watchlist-blazor\movie-watchlist-blazor\obj\Debug\net10.0\compressed\fwatnjfwrx-{0}-c2jlpeoesf-c2jlpeoesf.gz
 C:\Users\marka\Desktop\BYUI\Semester 3\Term 3\CSE 325\movie-watchlist-blazor\movie-watchlist-blazor\obj\Debug\net10.0\compressed\t77u8usab2-{0}-erw9l3u2r3-erw9l3u2r3.gz
@@ -84,3 +83,4 @@ C:\Users\marka\Desktop\BYUI\Semester 3\Term 3\CSE 325\movie-watchlist-blazor\mov
 C:\Users\marka\Desktop\BYUI\Semester 3\Term 3\CSE 325\movie-watchlist-blazor\movie-watchlist-blazor\obj\Debug\net10.0\movie-watchlist-blazor.pdb
 C:\Users\marka\Desktop\BYUI\Semester 3\Term 3\CSE 325\movie-watchlist-blazor\movie-watchlist-blazor\obj\Debug\net10.0\movie-watchlist-blazor.genruntimeconfig.cache
 C:\Users\marka\Desktop\BYUI\Semester 3\Term 3\CSE 325\movie-watchlist-blazor\movie-watchlist-blazor\obj\Debug\net10.0\ref\movie-watchlist-blazor.dll
+C:\Users\marka\Desktop\BYUI\Semester 3\Term 3\CSE 325\movie-watchlist-blazor\movie-watchlist-blazor\obj\Debug\net10.0\compressed\310kfgb06h-{0}-7kmort89oe-7kmort89oe.gz
