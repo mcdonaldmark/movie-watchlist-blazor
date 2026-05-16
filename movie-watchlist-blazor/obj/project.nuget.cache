@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "G/qv0x421H8=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\marka\\Desktop\\BYUI\\Semester 3\\Term 3\\CSE 325\\movie-watchlist-blazor\\movie-watchlist-blazor\\movie-watchlist-blazor.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\marka\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.7\\microsoft.aspnetcore.app.internal.assets.10.0.7.nupkg.sha512"
+  ],
+  "logs": []
+}
