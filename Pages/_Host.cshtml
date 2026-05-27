@@ -11,21 +11,26 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Movie Watchlist</title>
-    <base href="~/" />
 
-    <!-- Bootstrap -->
+    <!-- IMPORTANT: Correct base path for Blazor Server -->
+    <base href="/" />
+
+    <!-- Bootstrap (optional — remove if not using Bootstrap classes) -->
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
 
-    <!-- Site-wide styling -->
-    <link rel="stylesheet" href="css/site.css" />
+    <!-- Custom site styling -->
     <link rel="stylesheet" href="css/app.css" />
+
+    <!-- Favicon (optional but professional) -->
+    <link rel="icon" type="image/png" href="favicon.png" />
 </head>
 
 <body>
-
     <!-- Global Header -->
     <header class="navbar navbar-dark bg-dark px-3">
-        <h3 class="text-light mb-0">🎬 Movie Watchlist</h3>
+        <h3 class="text-light mb-0">
+            <span aria-hidden="true">🎬</span> Movie Watchlist
+        </h3>
     </header>
 
     <!-- Main App Container -->
@@ -40,6 +45,7 @@
         <small>© @DateTime.Now.Year Movie Watchlist — Built with Blazor Server</small>
     </footer>
 
+    <!-- Blazor Server script -->
     <script src="_framework/blazor.server.js"></script>
 </body>
 </html>
