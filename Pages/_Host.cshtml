@@ -1,0 +1,45 @@
+@page "/"
+@using movie_watchlist_blazor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie Watchlist</title>
+    <base href="~/" />
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+
+    <!-- Site-wide styling -->
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="css/app.css" />
+</head>
+
+<body>
+
+    <!-- Global Header -->
+    <header class="navbar navbar-dark bg-dark px-3">
+        <h3 class="text-light mb-0">🎬 Movie Watchlist</h3>
+    </header>
+
+    <!-- Main App Container -->
+    <main class="container py-4">
+        <app>
+            @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
+        </app>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-center text-light py-3 mt-4">
+        <small>© @DateTime.Now.Year Movie Watchlist — Built with Blazor Server</small>
+    </footer>
+
+    <script src="_framework/blazor.server.js"></script>
+</body>
+</html>

@@ -1,6 +1,10 @@
+C:\Users\Smith\movie-watchlist-blazor\obj\Debug\net8.0\movie-watchlist-blazor.csproj.AssemblyReference.cache
 C:\Users\Smith\movie-watchlist-blazor\obj\Debug\net8.0\movie-watchlist-blazor.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Smith\movie-watchlist-blazor\obj\Debug\net8.0\movie-watchlist-blazor.AssemblyInfoInputs.cache
 C:\Users\Smith\movie-watchlist-blazor\obj\Debug\net8.0\movie-watchlist-blazor.AssemblyInfo.cs
 C:\Users\Smith\movie-watchlist-blazor\obj\Debug\net8.0\movie-watchlist-blazor.csproj.CoreCompileInputs.cache
+C:\Users\Smith\movie-watchlist-blazor\obj\Debug\net8.0\movie-watchlist-blazor.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\Smith\movie-watchlist-blazor\obj\Debug\net8.0\movie-watchlist-blazor.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Smith\movie-watchlist-blazor\obj\Debug\net8.0\movie-watchlist-blazor.RazorAssemblyInfo.cache
+C:\Users\Smith\movie-watchlist-blazor\obj\Debug\net8.0\movie-watchlist-blazor.RazorAssemblyInfo.cs
 C:\Users\Smith\movie-watchlist-blazor\obj\Debug\net8.0\movie-watchlist-blazor.sourcelink.json
