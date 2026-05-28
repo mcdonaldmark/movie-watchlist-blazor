@@ -1,4 +1,4 @@
-/* _content/movie-watchlist-blazor/Components/Layout/MainLayout.razor.rz.scp.css */
+/* /Components/Layout/MainLayout.razor.rz.scp.css */
 .page[b-5yoj3phvyg] {
     position: relative;
     display: flex;
@@ -97,7 +97,7 @@ main[b-5yoj3phvyg] {
         right: 0.75rem;
         top: 0.5rem;
     }
-/* _content/movie-watchlist-blazor/Components/Layout/ReconnectModal.razor.rz.scp.css */
+/* /Components/Layout/ReconnectModal.razor.rz.scp.css */
 .components-reconnect-first-attempt-visible[b-u1yp3kw2tx],
 .components-reconnect-repeated-attempt-visible[b-u1yp3kw2tx],
 .components-reconnect-failed-visible[b-u1yp3kw2tx],
@@ -255,7 +255,7 @@ main[b-5yoj3phvyg] {
         opacity: 0;
     }
 }
-/* _content/movie-watchlist-blazor/Pages/Shared/NavMenu.razor.rz.scp.css */
+/* /Pages/Shared/NavMenu.razor.rz.scp.css */
 .navbar-toggler[b-57rlke845x] {
     appearance: none;
     cursor: pointer;

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Smith\\movie-watchlist-blazor\\movie-watchlist-blazor.csproj": {}
+    "C:\\Users\\Blaine\\Documents\\Code Collection\\movie-watchlist-blazor\\movie-watchlist-blazor.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Smith\\movie-watchlist-blazor\\movie-watchlist-blazor.csproj": {
+    "C:\\Users\\Blaine\\Documents\\Code Collection\\movie-watchlist-blazor\\movie-watchlist-blazor.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Smith\\movie-watchlist-blazor\\movie-watchlist-blazor.csproj",
+        "projectUniqueName": "C:\\Users\\Blaine\\Documents\\Code Collection\\movie-watchlist-blazor\\movie-watchlist-blazor.csproj",
         "projectName": "movie-watchlist-blazor",
-        "projectPath": "C:\\Users\\Smith\\movie-watchlist-blazor\\movie-watchlist-blazor.csproj",
-        "packagesPath": "C:\\Users\\Smith\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Smith\\movie-watchlist-blazor\\obj\\",
+        "projectPath": "C:\\Users\\Blaine\\Documents\\Code Collection\\movie-watchlist-blazor\\movie-watchlist-blazor.csproj",
+        "packagesPath": "C:\\Users\\Blaine\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Blaine\\Documents\\Code Collection\\movie-watchlist-blazor\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Smith\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Blaine\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -37,7 +37,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
         "net8.0": {
@@ -64,6 +65,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[10.0.8, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[8.0.0, )"
             }
           },
           "imports": [
@@ -85,7 +90,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.421/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

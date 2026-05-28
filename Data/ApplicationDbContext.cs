@@ -1,13 +1,17 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using movie_watchlist_blazor.Models;
+using movie_watchlist_blazor.Pages;
 
 namespace movie_watchlist_blazor.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
+        public DbSet<Review> Reviews { get; set;}
+
     }
 }
