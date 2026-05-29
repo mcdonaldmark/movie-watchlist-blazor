@@ -1,8 +1,8 @@
 @page "/login"
 @using movie_watchlist_blazor.Services
-@rendermode InteractiveServer
 @inject AppState AppState
 @inject NavigationManager NavManager
+
 
 <div class="page-center">
     <div class="auth-card">
@@ -34,13 +34,11 @@
     private void LoginUser()
     {
         AppState.IsLoggedIn = true;
-
         NavManager.NavigateTo("/dashboard");
     }
 
     private void GoHome()
     {
-        Console.WriteLine("GoHome clicked");
         NavManager.NavigateTo("/");
     }
 }
