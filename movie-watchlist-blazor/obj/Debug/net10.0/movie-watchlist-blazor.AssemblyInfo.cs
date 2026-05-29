@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute("Bootstrap5")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("movie-watchlist-blazor")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c6db84b43c863b658b000b6d15a50de35af4dec9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+567dc7417d938e5edfa5b55754c203fda0d56a99")]
 [assembly: System.Reflection.AssemblyProductAttribute("movie-watchlist-blazor")]
 [assembly: System.Reflection.AssemblyTitleAttribute("movie-watchlist-blazor")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
