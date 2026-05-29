@@ -45,19 +45,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\marka\\.nuget\\packages\\": {}
+    "C:\\Users\\Blaine\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\marka\\Desktop\\BYUI\\Semester 3\\Term 3\\CSE 325\\movie-watchlist-blazor\\movie-watchlist-blazor\\movie-watchlist-blazor.csproj",
+      "projectUniqueName": "C:\\Users\\Blaine\\Documents\\Code Collection\\movie-watchlist-blazor\\movie-watchlist-blazor\\movie-watchlist-blazor.csproj",
       "projectName": "movie-watchlist-blazor",
-      "projectPath": "C:\\Users\\marka\\Desktop\\BYUI\\Semester 3\\Term 3\\CSE 325\\movie-watchlist-blazor\\movie-watchlist-blazor\\movie-watchlist-blazor.csproj",
-      "packagesPath": "C:\\Users\\marka\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\marka\\Desktop\\BYUI\\Semester 3\\Term 3\\CSE 325\\movie-watchlist-blazor\\movie-watchlist-blazor\\obj\\",
+      "projectPath": "C:\\Users\\Blaine\\Documents\\Code Collection\\movie-watchlist-blazor\\movie-watchlist-blazor\\movie-watchlist-blazor.csproj",
+      "packagesPath": "C:\\Users\\Blaine\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Blaine\\Documents\\Code Collection\\movie-watchlist-blazor\\movie-watchlist-blazor\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\marka\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Blaine\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
