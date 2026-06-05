@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using movie_watchlist_blazor;
 using movie_watchlist_blazor.Data;
 using movie_watchlist_blazor.Models;
+using movie_watchlist_blazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +17,19 @@ builder.Services.AddDefaultIdentity<AppUser>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddRazorComponents()
-        .AddInteractiveServerComponents();
+        .AddInteractiveServerComponents()
+        .Services.AddScoped<AppState>();
+        
+builder.WebHost.ConfigureKestrel(serverOptions =>
 
+{
+
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+
+    serverOptions.ListenAnyIP(int.Parse(port));
+
+});
+ 
 
 
 var app = builder.Build();
