@@ -19,7 +19,17 @@ builder.Services.AddDefaultIdentity<AppUser>(options =>
 builder.Services.AddRazorComponents()
         .AddInteractiveServerComponents()
         .Services.AddScoped<AppState>();
+        
+builder.WebHost.ConfigureKestrel(serverOptions =>
 
+{
+
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+
+    serverOptions.ListenAnyIP(int.Parse(port));
+
+});
+ 
 
 
 var app = builder.Build();
