@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using movie_watchlist_blazor;
 using movie_watchlist_blazor.Data;
 using movie_watchlist_blazor.Models;
+using movie_watchlist_blazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,8 @@ builder.Services.AddDefaultIdentity<AppUser>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddRazorComponents()
-        .AddInteractiveServerComponents();
+        .AddInteractiveServerComponents()
+        .Services.AddScoped<AppState>();
 
 
 
