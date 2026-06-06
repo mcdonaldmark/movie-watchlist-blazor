@@ -2,6 +2,7 @@
 @using movie_watchlist_blazor.Models
 @using movie_watchlist_blazor.Services
 @inject NavigationManager NavManager
+@inject AppState AppState
 @rendermode InteractiveServer
 
 <div class="dashboard-wrapper">
@@ -9,6 +10,11 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="mb-1">🎬 My Movie Dashboard</h1>
+
+            <p class="text-muted mb-0">
+                Welcome, <strong>@AppState.CurrentUserName</strong>.
+            </p>
+
             <p class="text-muted mb-0">
                 Track, rate, and manage your watchlist
             </p>

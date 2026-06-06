@@ -2,15 +2,20 @@
 @using movie_watchlist_blazor.Models
 @using movie_watchlist_blazor.Services
 @inject NavigationManager NavManager
+@rendermode InteractiveServer
 
-<!-- FIX: removed page-center (this was vertically centering your whole page) -->
 <div class="movies-page">
 
-    <!-- FIX: adds proper top spacing and keeps title centered -->
-    <div class="dashboard-wrapper w-100 pt-3">
+    <div class="dashboard-wrapper w-100 pt-1">
 
-        <div class="text-center w-100 mb-4">
-            <h1 class="mb-0 movie-page-title">🎬 Movies</h1>
+        <div class="text-center mb-4">
+            <h1 class="mt-3 movie-page-title">
+                🎬 Movies
+            </h1>
+
+            <button type="button" class="btn btn-primary mb-1" @onclick="GoToDashboard">
+                ← Dashboard
+            </button>
         </div>
 
         @if (MovieState.Movies == null)
@@ -93,6 +98,11 @@
     private void ToggleWatched(int id)
     {
         MovieState.ToggleWatched(id);
+    }
+
+    private void GoToDashboard()
+    {
+        NavManager.NavigateTo("/dashboard", forceLoad: true);
     }
 
     private void AddToDashboard(int id)

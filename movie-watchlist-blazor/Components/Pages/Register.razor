@@ -1,6 +1,7 @@
 @page "/register"
 @rendermode InteractiveServer
 @inject NavigationManager NavManager
+@using movie_watchlist_blazor.Services
 
 <div class="page-center">
     <div class="auth-card">
@@ -10,15 +11,29 @@
         </h2>
 
         <div class="mt-3">
-            <input id="name" name="name" class="form-control mb-2" placeholder="Name" />
 
-            <input id="email" name="email" class="form-control mb-2" placeholder="Email" />
+            <input @bind="name" class="form-control mb-2" placeholder="Name" />
+            <input @bind="email" class="form-control mb-2" placeholder="Email" />
+            <input @bind="password" type="password" class="form-control mb-3" placeholder="Password" />
 
-            <input id="password" name="password" type="password" class="form-control mb-3" placeholder="Password" />
-
-            <button type="button" class="btn btn-primary w-100">
+            <button type="button" class="btn btn-primary w-100" @onclick="CreateAccount">
                 Create Account
             </button>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="text-danger mt-2">
+                    @errorMessage
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(successMessage))
+            {
+                <div class="text-success mt-2">
+                    @successMessage
+                </div>
+            }
+
         </div>
 
         <p class="mt-3 mb-1 text-muted">
@@ -33,6 +48,48 @@
 </div>
 
 @code {
+    private string name = "";
+    private string email = "";
+    private string password = "";
+
+    private string errorMessage = "";
+    private string successMessage = "";
+
+    private void CreateAccount()
+    {
+        errorMessage = "";
+        successMessage = "";
+
+        // validation
+        if (string.IsNullOrWhiteSpace(name) ||
+            string.IsNullOrWhiteSpace(email) ||
+            string.IsNullOrWhiteSpace(password))
+        {
+            errorMessage = "All fields (name, email, password) are required.";
+            return;
+        }
+
+        // attempt register
+        bool created = UserState.Register(name, email, password);
+
+        if (!created)
+        {
+            errorMessage = "An account with this email already exists.";
+            return;
+        }
+
+        successMessage = "Account created successfully! Redirecting...";
+
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(1000);
+            await InvokeAsync(() =>
+            {
+                NavManager.NavigateTo("/login");
+            });
+        });
+    }
+
     private void GoHome()
     {
         NavManager.NavigateTo("/");
