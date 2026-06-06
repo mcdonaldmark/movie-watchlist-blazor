@@ -7,7 +7,7 @@ using movie_watchlist_blazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ CHANGED: switched from PostgreSQL to In-Memory DB
+// Switched from PostgreSQL to In-Memory DB
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseInMemoryDatabase("MovieDb"));
 
@@ -28,8 +28,6 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 });
 
 var app = builder.Build();
-
-// ❌ REMOVED: EnsureCreated() (not needed for InMemory DB)
 
 if (!app.Environment.IsDevelopment())
 {
