@@ -38,6 +38,17 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.EnsureCreated();
+    if (!db.Movies.Any())
+    {
+        db.Movies.AddRange(
+            new Movie { Title = "Inception", Genre = "Sci-Fi", Year = 2010, PosterUrl = "https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg", CreateDate = DateTime.UtcNow },
+            new Movie { Title = "The Dark Knight", Genre = "Action", Year = 2008, PosterUrl = "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg", CreateDate = DateTime.UtcNow },
+            new Movie { Title = "Interstellar", Genre = "Sci-Fi", Year = 2014, PosterUrl = "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIe.jpg", CreateDate = DateTime.UtcNow },
+            new Movie { Title = "Parasite", Genre = "Thriller", Year = 2019, PosterUrl = "https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg", CreateDate = DateTime.UtcNow },
+            new Movie { Title = "Your Name", Genre = "Animation", Year = 2016, PosterUrl = "https://image.tmdb.org/t/p/w500/q719jXXEzOoYaps6babgKnONONX.jpg", CreateDate = DateTime.UtcNow }
+        );
+        db.SaveChanges();
+    }
 }
 
 if (!app.Environment.IsDevelopment())
