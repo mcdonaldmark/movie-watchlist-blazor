@@ -7,8 +7,9 @@ using movie_watchlist_blazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ✅ CHANGED: switched from PostgreSQL to In-Memory DB
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseInMemoryDatabase("MovieDb"));
 
 builder.Services.AddDefaultIdentity<AppUser>(options =>
 {
@@ -21,24 +22,14 @@ builder.Services.AddRazorComponents()
         .Services.AddScoped<AppState>();
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
-
 {
-
     var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-
     serverOptions.ListenAnyIP(int.Parse(port));
-
 });
-
-
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.EnsureCreated();
-}
+// ❌ REMOVED: EnsureCreated() (not needed for InMemory DB)
 
 if (!app.Environment.IsDevelopment())
 {
