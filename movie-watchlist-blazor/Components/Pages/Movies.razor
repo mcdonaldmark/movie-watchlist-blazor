@@ -3,10 +3,15 @@
 @using movie_watchlist_blazor.Services
 @inject NavigationManager NavManager
 
-<div class="page-center movies-page">
-    <div class="dashboard-wrapper w-100">
+<!-- FIX: removed page-center (this was vertically centering your whole page) -->
+<div class="movies-page">
 
-        <h1 class="mb-5 text-center movie-page-title">🎬 Movies</h1>
+    <!-- FIX: adds proper top spacing and keeps title centered -->
+    <div class="dashboard-wrapper w-100 pt-3">
+
+        <div class="text-center w-100 mb-4">
+            <h1 class="mb-0 movie-page-title">🎬 Movies</h1>
+        </div>
 
         @if (MovieState.Movies == null)
         {

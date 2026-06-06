@@ -19,6 +19,7 @@
         </button>
     </div>
 
+    <!-- SEARCH / FILTER (kept for future API use) -->
     <div class="row mb-4">
         <div class="col-md-6 mb-2">
             <input class="form-control" placeholder="Search movies..." @bind="searchText" />
@@ -36,66 +37,22 @@
         </div>
     </div>
 
+    <!-- DASHBOARD STATS (API READY PLACEHOLDERS) -->
     <div class="row mb-4">
 
         <div class="col-md-6 mb-2">
             <div class="card p-3 text-center">
                 <h6>🎬 Total Movies</h6>
-                <h3>@MovieState.Movies.Count</h3>
+                <h3>—</h3>
             </div>
         </div>
 
         <div class="col-md-6 mb-2">
             <div class="card p-3 text-center">
                 <h6>📊 Watched Status</h6>
-                <h3>@MovieState.WatchedMovieIds.Count / @MovieState.Movies.Count Watched</h3>
+                <h3>— / — Watched</h3>
             </div>
         </div>
-
-    </div>
-
-    <div class="row">
-
-        @foreach (var movie in FilteredMovies)
-        {
-            <div class="col-md-4 mb-3">
-
-                <div class="card h-100 p-3">
-
-                    <h5 class="mb-1">@movie.Title</h5>
-
-                    <small class="text-muted">
-                        @movie.Genre • @movie.Year
-                    </small>
-
-                    <div class="mt-2 mb-2">
-                        @for (int i = 1; i <= 5; i++)
-                        {
-                            <span>
-                                @(i <= Math.Round(movie.AverageRating) ? "⭐" : "☆")
-                            </span>
-                        }
-                    </div>
-
-                    @if (MovieState.WatchedMovieIds.Contains(movie.Id))
-                    {
-                        <span class="badge bg-success">Watched</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-warning text-dark">Not Watched</span>
-                    }
-
-                    <div class="mt-2">
-                        <button class="btn btn-sm btn-success w-100" @onclick="() => ToggleWatched(movie.Id)">
-                            @(MovieState.WatchedMovieIds.Contains(movie.Id) ? "Unwatch" : "Mark Watched")
-                        </button>
-                    </div>
-
-                </div>
-
-            </div>
-        }
 
     </div>
 
@@ -106,25 +63,8 @@
     private string searchText = "";
     private string selectedGenre = "";
 
-    private IEnumerable<MovieDto> FilteredMovies =>
-        MovieState.Movies.Where(m =>
-            (string.IsNullOrWhiteSpace(searchText) ||
-             m.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase)) &&
-            (string.IsNullOrWhiteSpace(selectedGenre) ||
-             m.Genre == selectedGenre)
-        );
-
-    private void ToggleWatched(int id)
-    {
-        if (MovieState.WatchedMovieIds.Contains(id))
-        {
-            MovieState.WatchedMovieIds.Remove(id);
-        }
-        else
-        {
-            MovieState.WatchedMovieIds.Add(id);
-        }
-    }
+    // Future API will populate these
+    private IEnumerable<MovieDto> FilteredMovies => Enumerable.Empty<MovieDto>();
 
     private void GoToMovies()
     {
