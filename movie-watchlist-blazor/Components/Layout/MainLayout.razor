@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavManager
+@inject movie_watchlist_blazor.Services.AppState AppState
 
 <div class="app-shell">
 
@@ -21,7 +22,7 @@
                     🎥 Movies
                 </NavLink>
 
-                <NavLink href="#" class="nav-link logout" @onclick="Logout">
+                <NavLink href="/logout" class="nav-link">
                     🚪 Logout
                 </NavLink>
 
@@ -42,16 +43,11 @@
 
     private bool IsAuthPage()
     {
-        var uri = NavManager.Uri.ToLower();
+        var uri = NavManager.ToBaseRelativePath(NavManager.Uri).ToLower();
 
-        return uri.Contains("/login")
-            || uri.Contains("/register")
-            || uri.EndsWith("/")
-            || uri.EndsWith("/home");
-    }
-
-    private void Logout()
-    {
-        NavManager.NavigateTo("/login");
+        return uri == ""
+            || uri == "login"
+            || uri == "register"
+            || uri == "home";
     }
 }

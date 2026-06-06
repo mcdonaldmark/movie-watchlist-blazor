@@ -11,9 +11,13 @@
         <div>
             <h1 class="mb-1">🎬 My Movie Dashboard</h1>
 
-            <p class="text-muted mb-0">
-                Welcome, <strong>@AppState.CurrentUserName</strong>.
-            </p>
+            <!-- FIX: only show welcome line if we actually have a user -->
+            @if (!string.IsNullOrWhiteSpace(AppState.CurrentUserName))
+            {
+                <p class="text-muted mb-0">
+                    Welcome, <strong>@AppState.CurrentUserName</strong>.
+                </p>
+            }
 
             <p class="text-muted mb-0">
                 Track, rate, and manage your watchlist
@@ -25,7 +29,6 @@
         </button>
     </div>
 
-    <!-- SEARCH / FILTER (kept for future API use) -->
     <div class="row mb-4">
         <div class="col-md-6 mb-2">
             <input class="form-control" placeholder="Search movies..." @bind="searchText" />
@@ -43,7 +46,7 @@
         </div>
     </div>
 
-    <!-- DASHBOARD STATS (API READY PLACEHOLDERS) -->
+    <!-- DASHBOARD STATS -->
     <div class="row mb-4">
 
         <div class="col-md-6 mb-2">
@@ -69,8 +72,22 @@
     private string searchText = "";
     private string selectedGenre = "";
 
-    // Future API will populate these
-    private IEnumerable<MovieDto> FilteredMovies => Enumerable.Empty<MovieDto>();
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // IMPORTANT: safe place to trigger JS-backed loading chain
+            await AppState.LoadUserAsync();
+
+            // ensures UI updates after sessionStorage load
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AppState.LoadUserAsync();
+    }
 
     private void GoToMovies()
     {

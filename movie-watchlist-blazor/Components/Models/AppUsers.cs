@@ -1,14 +1,21 @@
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
+    using System.ComponentModel.DataAnnotations;
 
-namespace movie_watchlist_blazor.Models
-{
-    public class AppUser : IdentityUser
+    namespace movie_watchlist_blazor.Models
     {
-        public string OAuthProvider { get; set; } = string.Empty;
-        public string OAuthProviderId { get; set; } = string.Empty;
-        public string AvatarUrl { get; set; } = string.Empty;
-        public DateTime CreateDate { get; set; } = DateTime.UtcNow;
-        public bool IsDeleted { get; set; }
+        public class AppUser
+        {
+            [Key]
+            public int Id { get; set; }
+
+            [Required]
+            public string Name { get; set; } = "";
+
+            [Required]
+            public string Email { get; set; } = "";
+
+            [Required]
+            public string Password { get; set; } = "";
+
+            public DateTime CreateDate { get; set; } = DateTime.UtcNow;
+        }
     }
-}

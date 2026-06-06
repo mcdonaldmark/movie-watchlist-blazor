@@ -1,26 +1,40 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using movie_watchlist_blazor;
 using movie_watchlist_blazor.Data;
-using movie_watchlist_blazor.Models;
 using movie_watchlist_blazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Switched from PostgreSQL to In-Memory DB
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseInMemoryDatabase("MovieDb"));
+// ----------------------
+// Database config
+// ----------------------
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
-builder.Services.AddDefaultIdentity<AppUser>(options =>
+if (string.IsNullOrWhiteSpace(databaseUrl))
 {
-    options.SignIn.RequireConfirmedAccount = false;
-})
-.AddEntityFrameworkStores<ApplicationDbContext>();
+    Console.WriteLine("WARNING: DATABASE_URL not set. Using fallback config.");
+    databaseUrl = builder.Configuration.GetConnectionString("DefaultConnection");
+}
 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseNpgsql(databaseUrl);
+});
+
+// ----------------------
+// Blazor
+// ----------------------
 builder.Services.AddRazorComponents()
-        .AddInteractiveServerComponents()
-        .Services.AddScoped<AppState>();
+    .AddInteractiveServerComponents();
 
+// App state
+builder.Services.AddScoped<AppState>();
+
+// Movie service
+builder.Services.AddScoped<IMovieService, MockMovieService>();
+
+// ----------------------
+// Render / Railway PORT
+// ----------------------
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
@@ -36,11 +50,19 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
+
 app.UseAntiforgery();
 
 app.MapRazorComponents<movie_watchlist_blazor.Components.App>()
     .AddInteractiveServerRenderMode();
+
+// ----------------------
+// Auto-migrate database
+// ----------------------
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
 
 app.Run();

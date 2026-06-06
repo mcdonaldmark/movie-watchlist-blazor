@@ -1,48 +1,41 @@
 @page "/register"
 @rendermode InteractiveServer
+
+@using movie_watchlist_blazor.Models
+@using movie_watchlist_blazor.Data
+@using System.Linq
+
 @inject NavigationManager NavManager
-@using movie_watchlist_blazor.Services
+@inject ApplicationDbContext Db
 
 <div class="page-center">
     <div class="auth-card">
 
-        <h2 style="border:none !important; box-shadow:none !important; margin-top:0;">
-            Register
-        </h2>
+        <h2>Register</h2>
 
-        <div class="mt-3">
+        <input class="form-control mb-2" placeholder="Name" @bind="name" />
+        <input class="form-control mb-2" placeholder="Email" @bind="email" />
 
-            <input @bind="name" class="form-control mb-2" placeholder="Name" />
-            <input @bind="email" class="form-control mb-2" placeholder="Email" />
-            <input @bind="password" type="password" class="form-control mb-3" placeholder="Password" />
+        <!-- FIX: added placeholder -->
+        <input class="form-control mb-3" type="password" placeholder="Password" @bind="password" />
 
-            <button type="button" class="btn btn-primary w-100" @onclick="CreateAccount">
-                Create Account
-            </button>
+        <button class="btn btn-primary w-100" @onclick="CreateAccount">
+            Create Account
+        </button>
 
-            @if (!string.IsNullOrEmpty(errorMessage))
-            {
-                <div class="text-danger mt-2">
-                    @errorMessage
-                </div>
-            }
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="text-danger mt-2">@errorMessage</div>
+        }
 
-            @if (!string.IsNullOrEmpty(successMessage))
-            {
-                <div class="text-success mt-2">
-                    @successMessage
-                </div>
-            }
-
-        </div>
-
-        <p class="mt-3 mb-1 text-muted">
-            Already have an account? <a href="/login">Login</a>
+        <p class="mt-3 text-muted">
+            Already have an account?
+            <a href="/login">Login!</a>
         </p>
 
-        <button type="button" class="btn btn-outline-light w-100 mt-1" @onclick="GoHome">
-            Return to Home
-        </button>
+        <p class="mt-2">
+            <a href="/">← Return to Home Screen</a>
+        </p>
 
     </div>
 </div>
@@ -51,47 +44,39 @@
     private string name = "";
     private string email = "";
     private string password = "";
-
     private string errorMessage = "";
-    private string successMessage = "";
 
-    private void CreateAccount()
+    private async Task CreateAccount()
     {
         errorMessage = "";
-        successMessage = "";
 
-        // validation
+        // ✅ REQUIRED FIELD CHECK (NEW)
         if (string.IsNullOrWhiteSpace(name) ||
             string.IsNullOrWhiteSpace(email) ||
             string.IsNullOrWhiteSpace(password))
         {
-            errorMessage = "All fields (name, email, password) are required.";
+            errorMessage = "All fields are required (Name, Email, Password).";
             return;
         }
 
-        // attempt register
-        bool created = UserState.Register(name, email, password);
+        var exists = Db.Users.Any(u => u.Email == email);
 
-        if (!created)
+        if (exists)
         {
-            errorMessage = "An account with this email already exists.";
+            errorMessage = "Email already exists.";
             return;
         }
 
-        successMessage = "Account created successfully! Redirecting...";
-
-        _ = Task.Run(async () =>
+        var user = new AppUser
         {
-            await Task.Delay(1000);
-            await InvokeAsync(() =>
-            {
-                NavManager.NavigateTo("/login");
-            });
-        });
-    }
+            Name = name,
+            Email = email,
+            Password = password
+        };
 
-    private void GoHome()
-    {
-        NavManager.NavigateTo("/");
+        Db.Users.Add(user);
+        await Db.SaveChangesAsync();
+
+        NavManager.NavigateTo("/login");
     }
 }
