@@ -4,6 +4,7 @@
 @inject NavigationManager NavManager
 @inject AppState AppState
 @rendermode InteractiveServer
+@implements IDisposable
 
 <div class="dashboard-wrapper">
 
@@ -30,19 +31,25 @@
     </div>
 
     <div class="row mb-4">
-        <div class="col-md-6 mb-2">
-            <input class="form-control" placeholder="Search movies..." @bind="searchText" />
+        <div class="col-md-5 mb-2">
+            <input class="form-control" placeholder="Search movies..." @bind="searchText" @bind:event="oninput" />
+        </div>
+
+        <div class="col-md-4 mb-2">
+            <select class="form-select" @bind="selectedGenre" @bind:event="onchange">
+                <option value="">All Genres</option>
+                @foreach (var genre in AvailableGenres)
+                {
+                    <option value="@genre">@genre</option>
+                }
+            </select>
         </div>
 
         <div class="col-md-3 mb-2">
-            <select class="form-select" @bind="selectedGenre">
-                <option value="">All Genres</option>
-                <option>Action</option>
-                <option>Drama</option>
-                <option>Sci-Fi</option>
-                <option>Comedy</option>
-                <option>Horror</option>
-            </select>
+            <button type="button" class="btn btn-outline-secondary w-100" @onclick="ClearFilters"
+                    disabled="@(!HasActiveFilters)">
+                Clear filters
+            </button>
         </div>
     </div>
 
@@ -51,18 +58,128 @@
 
         <div class="col-md-6 mb-2">
             <div class="card p-3 text-center">
-                <h6>🎬 Total Movies</h6>
-                <h3>—</h3>
+                <h6>🎬 Watch list</h6>
+                <h3>@MovieState.Movies.Count</h3>
             </div>
         </div>
 
         <div class="col-md-6 mb-2">
             <div class="card p-3 text-center">
                 <h6>📊 Watched Status</h6>
-                <h3>— / — Watched</h3>
+                <h3>@MovieState.WatchedMovieIds.Count / @MovieState.Movies.Count Watched</h3>
             </div>
         </div>
 
+    </div>
+
+
+    @{
+        var watchlist = GetFilteredMovies(MovieState.Movies.Where(m => !MovieState.IsWatched(m.Id)));
+        var watched = GetFilteredMovies(MovieState.Movies.Where(m => MovieState.IsWatched(m.Id)));
+    }
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <h4>Watchlist</h4>
+            @if (!watchlist.Any())
+            {
+                <p class="text-muted">No movies in your watchlist yet.</p>
+            }
+            else
+            {
+                <div class="row">
+                    @foreach (var m in watchlist)
+                    {
+                        <div class="col-12 mb-3">
+                            <div class="card h-100 shadow-sm" style="cursor:pointer;" @onclick="() => GoToMovie(m.Id)">
+                                <div class="row g-0 align-items-center">
+                                    @if (!string.IsNullOrEmpty(m.PosterUrl))
+                                    {
+                                        <div class="col-auto">
+                                            <img class="img-fluid rounded-start" src="@m.PosterUrl" alt="Poster de @m.Title"
+                                                 style="width:100px; height:140px; object-fit:cover;" />
+                                        </div>
+                                    }
+                                    <div class="col">
+                                        <div class="card-body py-2 px-3 d-flex flex-column">
+                                            <h5 class="card-title mb-1">@m.Title</h5>
+                                            <p class="text-muted mb-1">@m.Genre • @m.Year</p>
+                                            <div class="mb-2">
+                                                @for (int i = 1; i <= 5; i++)
+                                                {
+                                                    <span>@(i <= Math.Round(m.AverageRating) ? "⭐" : "☆")</span>
+                                                }
+                                            </div>
+                                            <div class="mt-auto d-flex gap-2">
+                                                <button type="button" class="btn btn-success btn-sm flex-grow-1"
+                                                        @onclick:stopPropagation="true" @onclick="() => ToggleWatched(m.Id)">
+                                                    Watched
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm flex-grow-1"
+                                                        @onclick:stopPropagation="true" @onclick="() => RemoveMovie(m.Id)">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <h4>Watched</h4>
+            @if (!watched.Any())
+            {
+                <p class="text-muted">No watched movies yet.</p>
+            }
+            else
+            {
+                <div class="row">
+                    @foreach (var m in watched)
+                    {
+                        <div class="col-12 mb-3">
+                            <div class="card h-100 shadow-sm" style="cursor:pointer;" @onclick="() => GoToMovie(m.Id)">
+                                <div class="row g-0 align-items-center">
+                                    @if (!string.IsNullOrEmpty(m.PosterUrl))
+                                    {
+                                        <div class="col-auto">
+                                            <img class="img-fluid rounded-start" src="@m.PosterUrl" alt="Poster de @m.Title"
+                                                 style="width:100px; height:140px; object-fit:cover;" />
+                                        </div>
+                                    }
+                                    <div class="col">
+                                        <div class="card-body py-2 px-3 d-flex flex-column">
+                                            <h5 class="card-title mb-1">@m.Title</h5>
+                                            <p class="text-muted mb-1">@m.Genre • @m.Year</p>
+                                            <div class="mb-2">
+                                                @for (int i = 1; i <= 5; i++)
+                                                {
+                                                    <span>@(i <= Math.Round(m.AverageRating) ? "⭐" : "☆")</span>
+                                                }
+                                            </div>
+                                            <div class="mt-auto d-flex gap-2">
+                                                <button type="button" class="btn btn-secondary btn-sm flex-grow-1"
+                                                        @onclick:stopPropagation="true" @onclick="() => ToggleWatched(m.Id)">
+                                                    Unwatch
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm flex-grow-1"
+                                                        @onclick:stopPropagation="true" @onclick="() => RemoveMovie(m.Id)">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
     </div>
 
 </div>
@@ -71,6 +188,36 @@
 
     private string searchText = "";
     private string selectedGenre = "";
+
+    private bool HasActiveFilters => !string.IsNullOrWhiteSpace(searchText) || !string.IsNullOrWhiteSpace(selectedGenre);
+
+    private bool MovieMatchesFilter(MovieDto movie)
+    {
+        var matchesSearch = string.IsNullOrWhiteSpace(searchText) || (movie.Title?.Contains(searchText,
+StringComparison.OrdinalIgnoreCase) == true);
+        var matchesGenre = string.IsNullOrWhiteSpace(selectedGenre) || (movie.Genre?.Split(',').Any(g => string.Equals(g.Trim(),
+selectedGenre, StringComparison.OrdinalIgnoreCase)) == true);
+
+        return matchesSearch && matchesGenre;
+    }
+
+    private List<MovieDto> GetFilteredMovies(IEnumerable<MovieDto> movies)
+    {
+        return movies.Where(MovieMatchesFilter).ToList();
+    }
+
+    private IEnumerable<string> AvailableGenres => MovieState.Movies
+        .SelectMany(m => (m.Genre ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries))
+        .Select(g => g.Trim())
+        .Where(g => !string.IsNullOrEmpty(g))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(g => g);
+
+    private void ClearFilters()
+    {
+        searchText = string.Empty;
+        selectedGenre = string.Empty;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -87,10 +234,37 @@
     protected override async Task OnInitializedAsync()
     {
         await AppState.LoadUserAsync();
+        // subscribe to MovieState changes so dashboard updates in real-time
+        MovieState.OnChange += HandleMovieStateChanged;
+    }
+
+    private void HandleMovieStateChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        MovieState.OnChange -= HandleMovieStateChanged;
     }
 
     private void GoToMovies()
     {
         NavManager.NavigateTo("/movies");
+    }
+
+    private void GoToMovie(int id)
+    {
+        NavManager.NavigateTo($"/movie/{id}");
+    }
+
+    private void ToggleWatched(int movieId)
+    {
+        MovieState.ToggleWatched(movieId);
+    }
+
+    private void RemoveMovie(int movieId)
+    {
+        MovieState.RemoveMovie(movieId);
     }
 }

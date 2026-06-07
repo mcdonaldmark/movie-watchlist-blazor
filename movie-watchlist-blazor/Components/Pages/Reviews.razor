@@ -2,6 +2,7 @@
 @using movie_watchlist_blazor.Models
 @using movie_watchlist_blazor.Services
 @inject IMovieService MovieService
+@rendermode InteractiveServer
 
 <div class="page-center">
     <div class="dashboard-wrapper w-100">
@@ -23,13 +24,36 @@
             <div class="card p-3 mb-4 shadow-sm">
                 <h5>Add Review</h5>
 
-                <textarea class="form-control mb-2" placeholder="Write review..." @bind="newReview.Comment"></textarea>
+                <textarea class="form-control mb-2" placeholder="Write review..." @bind="newReview.Comment"
+                          @bind:event="oninput"></textarea>
 
-                <input class="form-control mb-2" type="number" min="1" max="5" @bind="newReview.Rating" />
+                <div class="mb-2">
+                    <div class="mb-1">Rating</div>
+                    <div class="btn-group" role="group" aria-label="Rating selection">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            var starValue = i;
+                            <button type="button"
+                                    class="btn btn-sm @(newReview.Rating >= starValue ? "btn-warning" : "btn-outline-secondary")"
+                                    @onclick="() => SetRating(starValue)">
+                                @(newReview.Rating >= starValue ? "★" : "☆")
+                            </button>
+                        }
+                    </div>
+                    <div class="small text-muted mt-1">
+                        Selected rating: <strong>@(newReview.Rating == 0 ? "None" : newReview.Rating.ToString())</strong>
+                    </div>
+                </div>
 
-                <button class="btn btn-success w-100" @onclick="AddReview">
+                <button type="button" class="btn btn-success w-100" @onclick="AddReview" disabled="@(!CanSubmitReview)">
                     Submit
                 </button>
+                @if (!CanSubmitReview)
+                {
+                    <div class="small text-danger mt-2">
+                        Select a rating and write a comment before submitting.
+                    </div>
+                }
             </div>
 
             @if (!reviews.Any())
@@ -44,9 +68,22 @@
 
                         @if (editingReviewId == r.Id)
                         {
-                            <textarea class="form-control mb-2" @bind="editModel.Comment"></textarea>
+                            <textarea class="form-control mb-2" @bind="editModel.Comment" @bind:event="oninput"></textarea>
 
-                            <input class="form-control mb-2" type="number" min="1" max="5" @bind="editModel.Rating" />
+                            <div class="mb-2">
+                                <div class="mb-1">Rating</div>
+                                <div class="btn-group" role="group" aria-label="Edit rating selection">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        var starValue = i;
+                                        <button type="button"
+                                                class="btn btn-sm @(editModel.Rating >= starValue ? "btn-warning" : "btn-outline-secondary")"
+                                                @onclick="() => SetEditRating(starValue)">
+                                            @(editModel.Rating >= starValue ? "★" : "☆")
+                                        </button>
+                                    }
+                                </div>
+                            </div>
 
                             <button class="btn btn-primary btn-sm me-2" @onclick="() => SaveEdit(r.Id)">
                                 Save
@@ -94,6 +131,21 @@
 
     private int? editingReviewId;
     private ReviewDto editModel = new();
+
+    private bool CanSubmitReview => newReview.Rating >= 1 && newReview.Rating <= 5 &&
+!string.IsNullOrWhiteSpace(newReview.Comment);
+
+    private void SetRating(int rating)
+    {
+        newReview.Rating = rating;
+        StateHasChanged();
+    }
+
+    private void SetEditRating(int rating)
+    {
+        editModel.Rating = rating;
+        StateHasChanged();
+    }
 
     protected override async Task OnInitializedAsync()
     {

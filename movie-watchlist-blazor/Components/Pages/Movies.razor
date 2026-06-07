@@ -2,6 +2,7 @@
 @using movie_watchlist_blazor.Models
 @using movie_watchlist_blazor.Services
 @inject NavigationManager NavManager
+@inject IMovieService MovieService
 @rendermode InteractiveServer
 
 <div class="movies-page">
@@ -18,73 +19,121 @@
             </button>
         </div>
 
-        @if (MovieState.Movies == null)
+        <div class="d-flex flex-wrap gap-2 align-items-center mb-4">
+            <div class="fw-semibold">Filter by genre</div>
+
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-sm @(SelectedGenreId == null ? "btn-primary" : "btn-outline-primary")"
+                        @onclick="() => SelectGenre(null)">
+                    All genres
+                </button>
+                @foreach (var genre in genres)
+                {
+                    <button class="btn btn-sm @(SelectedGenreId == genre.Id ? "btn-primary" : "btn-outline-primary")"
+                            @onclick="() => SelectGenre(genre.Id)">
+                        @genre.Name
+                    </button>
+                }
+            </div>
+        </div>
+
+        @if (!movies.Any() && hasMoreMovies)
         {
             <p class="text-center">Loading movies...</p>
+        }
+        else if (!movies.Any())
+        {
+            <p class="text-center">No movies found.</p>
         }
         else
         {
             <div class="row justify-content-center">
 
-                @foreach (var movie in MovieState.Movies)
+                @foreach (var movie in movies)
                 {
                     <div class="col-md-6 mb-3">
 
-                        <div class="card p-3 shadow-sm">
-
-                            <h5 style="cursor:pointer;" @onclick="() => GoToMovie(movie.Id)">
-                                @movie.Title
-                            </h5>
-
-                            <p class="text-muted">@movie.Genre • @movie.Year</p>
-
-                            <div class="mb-2">
-                                @for (int i = 1; i <= 5; i++)
+                        <div class="card p-3 shadow-sm" style="cursor:pointer;" @onclick="() => GoToMovie(movie.Id)">
+                            <div class="d-flex gap-3">
+                                @if (!string.IsNullOrEmpty(movie.PosterUrl))
                                 {
-                                    <span>
-                                        @(i <= Math.Round(movie.AverageRating) ? "⭐" : "☆")
-                                    </span>
+                                    <img src="@movie.PosterUrl" alt="Poster de @movie.Title" class="rounded shadow-sm"
+                                         style="width:150px; height:auto; object-fit:cover;" />
                                 }
-                            </div>
 
-                            @if (MovieState.IsWatched(movie.Id))
-                            {
-                                <span class="badge bg-success mb-2">Watched</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-warning text-dark mb-2">Not Watched</span>
-                            }
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-2">
+                                        @movie.Title
+                                    </h5>
 
-                            <!-- ACTIONS -->
-                            <div class="d-flex gap-2 mt-2">
+                                    <p class="text-muted mb-2">
+                                        @movie.Genre • @(!string.IsNullOrEmpty(movie.ReleaseDate) ? movie.ReleaseDate :
+                                        movie.Year.ToString())
+                                    </p>
 
-                                <button class="btn btn-sm btn-success w-100" @onclick="() => ToggleWatched(movie.Id)">
-                                    @(MovieState.IsWatched(movie.Id) ? "Unwatch" : "Watch")
-                                </button>
+                                    <div class="mb-2">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <span>
+                                                @(i <= Math.Round(movie.AverageRating) ? "⭐" : "☆")
+                                            </span>
+                                        }
+                                    </div>
 
-                                <button class="btn btn-sm btn-primary w-100" @onclick="() => GoToReviews(movie.Id)">
-                                    Reviews
-                                </button>
+                                    @if (MovieState.IsWatched(movie.Id))
+                                    {
+                                        <span class="badge bg-success mb-2">Watched</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark mb-2">Not Watched</span>
+                                    }
 
-                                <button class="btn btn-sm btn-dashboard w-100" @onclick="() => AddToDashboard(movie.Id)">
-                                    Add to Dashboard
-                                </button>
+                                    <div class="d-flex gap-2 mt-2">
 
-                            </div>
+                                        <button class="btn btn-sm btn-success w-100" @onclick:stopPropagation="true"
+                                                @onclick="() => ToggleWatched(movie.Id)">
+                                            @(MovieState.IsWatched(movie.Id) ? "Unwatch" : "Watched")
+                                        </button>
 
-                            @if (addedMovieId == movie.Id)
-                            {
-                                <div class="mt-2 text-success fw-bold">
-                                    Added successfully ✅
+                                        <button class="btn btn-sm btn-primary w-100" @onclick:stopPropagation="true"
+                                                @onclick="() => GoToReviews(movie.Id)">
+                                            Reviews
+                                        </button>
+
+                                        <button class="btn btn-sm btn-dashboard w-100" @onclick:stopPropagation="true"
+                                                @onclick="() => AddToDashboard(movie.Id)"
+                                                disabled="@MovieState.Movies.Any(m => m.Id == movie.Id)">
+                                            @(MovieState.Movies.Any(m => m.Id == movie.Id) ? "Added" : "Add to watchlist")
+                                        </button>
+
+                                    </div>
+
+                                    @if (addedMovieId == movie.Id)
+                                    {
+                                        <div class="mt-2 text-success fw-bold">
+                                            Added successfully ✅
+                                        </div>
+                                    }
                                 </div>
-                            }
-
+                            </div>
                         </div>
 
                     </div>
                 }
 
+            </div>
+
+            <div class="text-center mt-3">
+                <button class="btn btn-primary" @onclick="LoadMoreMovies"
+                        disabled="@(isLoadingMore || (!hasMoreMovies && !movieBuffer.Any()))">
+                    @(isLoadingMore ? "Loading..." : "Load more movies")
+                </button>
+
+                @if (!hasMoreMovies && !movieBuffer.Any())
+                {
+                    <div class="mt-2 text-muted">No more movies available.</div>
+                }
             </div>
         }
 
@@ -94,9 +143,28 @@
 @code {
 
     private int? addedMovieId;
+    private List<MovieDto> movies = new();
+    private Queue<MovieDto> movieBuffer = new();
+    private List<GenreDto> genres = new();
+    private string selectedGenreIdString = string.Empty;
+    private int nextPage = 1;
+    private bool hasMoreMovies = true;
+    private bool isLoadingMore;
+
+    private int? SelectedGenreId => string.IsNullOrEmpty(selectedGenreIdString)
+        ? null
+        : int.TryParse(selectedGenreIdString, out var id)
+            ? id
+            : null;
 
     private void ToggleWatched(int id)
     {
+        var movieObj = movies.FirstOrDefault(m => m.Id == id);
+        if (movieObj != null && !MovieState.Movies.Any(m => m.Id == id))
+        {
+            MovieState.AddMovie(movieObj);
+        }
+
         MovieState.ToggleWatched(id);
     }
 
@@ -107,7 +175,12 @@
 
     private void AddToDashboard(int id)
     {
-        MovieState.ToggleWatched(id);
+        // Add the movie object to the shared MovieState list so Dashboard can reflect it
+        var movieObj = movies.FirstOrDefault(m => m.Id == id);
+        if (movieObj != null)
+        {
+            MovieState.AddMovie(movieObj);
+        }
 
         addedMovieId = id;
 
@@ -127,5 +200,93 @@
     private void GoToMovie(int movieId)
     {
         NavManager.NavigateTo($"/movie/{movieId}");
+    }
+
+    private async Task LoadGenresAsync()
+    {
+        genres = await MovieService.GetGenresAsync();
+    }
+
+    private async Task SelectGenre(int? genreId)
+    {
+        selectedGenreIdString = genreId?.ToString() ?? string.Empty;
+        await ResetMoviesAsync();
+    }
+
+    private async Task ResetFilters()
+    {
+        selectedGenreIdString = string.Empty;
+        await ResetMoviesAsync();
+    }
+
+    private async Task OnGenreChanged(ChangeEventArgs e)
+    {
+        selectedGenreIdString = e.Value?.ToString() ?? string.Empty;
+        await ResetMoviesAsync();
+    }
+
+    private async Task ResetMoviesAsync()
+    {
+        movies.Clear();
+        movieBuffer.Clear();
+        nextPage = 1;
+        hasMoreMovies = true;
+
+        await LoadUntilMinimumAsync(30);
+    }
+
+    private async Task LoadUntilMinimumAsync(int targetCount)
+    {
+        while (movies.Count < targetCount && hasMoreMovies)
+        {
+            await LoadNextPageAsync();
+        }
+    }
+
+    private async Task LoadNextPageAsync()
+    {
+        var fetched = await MovieService.GetMoviesAsync(nextPage, SelectedGenreId);
+        nextPage++;
+
+        if (fetched.Count == 0)
+        {
+            hasMoreMovies = false;
+            return;
+        }
+
+        foreach (var movie in fetched)
+        {
+            if (movies.Count < 30)
+            {
+                movies.Add(movie);
+            }
+            else
+            {
+                movieBuffer.Enqueue(movie);
+            }
+        }
+    }
+
+    private async Task LoadMoreMovies()
+    {
+        isLoadingMore = true;
+
+        if (!movieBuffer.Any() && hasMoreMovies)
+        {
+            await LoadNextPageAsync();
+        }
+
+        while (movieBuffer.Any())
+        {
+            movies.Add(movieBuffer.Dequeue());
+        }
+
+        isLoadingMore = false;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadGenresAsync();
+        await ResetMoviesAsync();
     }
 }

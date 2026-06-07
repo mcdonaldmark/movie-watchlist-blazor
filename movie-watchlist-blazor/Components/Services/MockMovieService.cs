@@ -6,9 +6,9 @@ public class MockMovieService : IMovieService
 {
     private readonly List<MovieDto> _movies = new()
     {
-        new MovieDto { Id = 1, Title = "Inception", Genre = "Sci-Fi", Year = 2010, AverageRating = 4.8 },
-        new MovieDto { Id = 2, Title = "Interstellar", Genre = "Sci-Fi", Year = 2014, AverageRating = 4.7 },
-        new MovieDto { Id = 3, Title = "The Dark Knight", Genre = "Action", Year = 2008, AverageRating = 4.9 }
+        new MovieDto { Id = 1, Title = "Inception", Genre = "Sci-Fi", GenreIds = new List<int> { 2 }, Year = 2010, AverageRating = 4.8 },
+        new MovieDto { Id = 2, Title = "Interstellar", Genre = "Sci-Fi", GenreIds = new List<int> { 2 }, Year = 2014, AverageRating = 4.7 },
+        new MovieDto { Id = 3, Title = "The Dark Knight", Genre = "Action", GenreIds = new List<int> { 1 }, Year = 2008, AverageRating = 4.9 }
     };
 
     private readonly Dictionary<int, List<ReviewDto>> _reviews = new();
@@ -18,9 +18,34 @@ public class MockMovieService : IMovieService
 
     // ================= MOVIES =================
 
-    public Task<List<MovieDto>> GetMoviesAsync()
+    public Task<List<MovieDto>> GetMoviesAsync(int page = 1, int? genreId = null)
     {
-        return Task.FromResult(_movies);
+        var movies = _movies.AsEnumerable();
+
+        if (genreId.HasValue)
+        {
+            movies = movies.Where(m => m.GenreIds.Contains(genreId.Value));
+        }
+
+        return Task.FromResult(movies.Skip((page - 1) * 20).Take(20).ToList());
+    }
+
+    public Task<List<GenreDto>> GetGenresAsync()
+    {
+        var genres = new List<GenreDto>
+        {
+            new GenreDto { Id = 1, Name = "Action" },
+            new GenreDto { Id = 2, Name = "Sci-Fi" },
+            new GenreDto { Id = 3, Name = "Drama" }
+        };
+
+        return Task.FromResult(genres);
+    }
+
+    public Task<MovieDto?> GetMovieByIdAsync(int movieId)
+    {
+        var m = _movies.FirstOrDefault(mv => mv.Id == movieId);
+        return Task.FromResult<MovieDto?>(m);
     }
 
     public Task AddToWatchlistAsync(int movieId)

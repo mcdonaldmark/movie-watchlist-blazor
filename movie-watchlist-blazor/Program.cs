@@ -29,8 +29,10 @@ builder.Services.AddRazorComponents()
 // App state
 builder.Services.AddScoped<AppState>();
 
-// Movie service
-builder.Services.AddScoped<IMovieService, MockMovieService>();
+builder.Services.AddHttpClient();
+
+// Movie service: TMDB implementation (register as typed client for IMovieService)
+builder.Services.AddHttpClient<IMovieService, TmdbMovieService>(c => c.BaseAddress = new Uri("https://api.themoviedb.org/3/"));
 
 // ----------------------
 // Render / Railway PORT
