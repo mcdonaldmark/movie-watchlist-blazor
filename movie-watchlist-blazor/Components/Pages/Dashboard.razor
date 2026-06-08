@@ -1,4 +1,6 @@
 @page "/dashboard"
+<PageTitle>Dashboard | Movie Watchlist</PageTitle>
+
 @using movie_watchlist_blazor.Models
 @using movie_watchlist_blazor.Services
 @inject NavigationManager NavManager
@@ -72,7 +74,6 @@
 
     </div>
 
-
     @{
         var watchlist = GetFilteredMovies(MovieState.Movies.Where(m => !MovieState.IsWatched(m.Id)));
         var watched = GetFilteredMovies(MovieState.Movies.Where(m => MovieState.IsWatched(m.Id)));
@@ -80,7 +81,8 @@
 
     <div class="row">
         <div class="col-lg-6 mb-4">
-            <h4>Watchlist</h4>
+            <h2>Watchlist</h2>
+
             @if (!watchlist.Any())
             {
                 <p class="text-muted">No movies in your watchlist yet.</p>
@@ -102,19 +104,23 @@
                                     }
                                     <div class="col">
                                         <div class="card-body py-2 px-3 d-flex flex-column">
-                                            <h5 class="card-title mb-1">@m.Title</h5>
+                                            <h3 class="card-title mb-1">@m.Title</h3>
+
                                             <p class="text-muted mb-1">@m.Genre • @m.Year</p>
+
                                             <div class="mb-2">
                                                 @for (int i = 1; i <= 5; i++)
                                                 {
                                                     <span>@(i <= Math.Round(m.AverageRating) ? "⭐" : "☆")</span>
                                                 }
                                             </div>
+
                                             <div class="mt-auto d-flex gap-2">
                                                 <button type="button" class="btn btn-success btn-sm flex-grow-1"
                                                         @onclick:stopPropagation="true" @onclick="() => ToggleWatched(m.Id)">
                                                     Watched
                                                 </button>
+
                                                 <button type="button" class="btn btn-danger btn-sm flex-grow-1"
                                                         @onclick:stopPropagation="true" @onclick="() => RemoveMovie(m.Id)">
                                                     Delete
@@ -131,7 +137,8 @@
         </div>
 
         <div class="col-lg-6 mb-4">
-            <h4>Watched</h4>
+            <h2>Watched</h2>
+
             @if (!watched.Any())
             {
                 <p class="text-muted">No watched movies yet.</p>
@@ -153,19 +160,23 @@
                                     }
                                     <div class="col">
                                         <div class="card-body py-2 px-3 d-flex flex-column">
-                                            <h5 class="card-title mb-1">@m.Title</h5>
+                                            <h3 class="card-title mb-1">@m.Title</h3>
+
                                             <p class="text-muted mb-1">@m.Genre • @m.Year</p>
+
                                             <div class="mb-2">
                                                 @for (int i = 1; i <= 5; i++)
                                                 {
                                                     <span>@(i <= Math.Round(m.AverageRating) ? "⭐" : "☆")</span>
                                                 }
                                             </div>
+
                                             <div class="mt-auto d-flex gap-2">
                                                 <button type="button" class="btn btn-secondary btn-sm flex-grow-1"
                                                         @onclick:stopPropagation="true" @onclick="() => ToggleWatched(m.Id)">
                                                     Unwatch
                                                 </button>
+
                                                 <button type="button" class="btn btn-danger btn-sm flex-grow-1"
                                                         @onclick:stopPropagation="true" @onclick="() => RemoveMovie(m.Id)">
                                                     Delete
@@ -195,8 +206,10 @@
     {
         var matchesSearch = string.IsNullOrWhiteSpace(searchText) || (movie.Title?.Contains(searchText,
 StringComparison.OrdinalIgnoreCase) == true);
-        var matchesGenre = string.IsNullOrWhiteSpace(selectedGenre) || (movie.Genre?.Split(',').Any(g => string.Equals(g.Trim(),
-selectedGenre, StringComparison.OrdinalIgnoreCase)) == true);
+
+        var matchesGenre = string.IsNullOrWhiteSpace(selectedGenre) ||
+            (movie.Genre?.Split(',').Any(g =>
+                string.Equals(g.Trim(), selectedGenre, StringComparison.OrdinalIgnoreCase)) == true);
 
         return matchesSearch && matchesGenre;
     }
@@ -223,10 +236,7 @@ selectedGenre, StringComparison.OrdinalIgnoreCase)) == true);
     {
         if (firstRender)
         {
-            // IMPORTANT: safe place to trigger JS-backed loading chain
             await AppState.LoadUserAsync();
-
-            // ensures UI updates after sessionStorage load
             StateHasChanged();
         }
     }
@@ -234,7 +244,6 @@ selectedGenre, StringComparison.OrdinalIgnoreCase)) == true);
     protected override async Task OnInitializedAsync()
     {
         await AppState.LoadUserAsync();
-        // subscribe to MovieState changes so dashboard updates in real-time
         MovieState.OnChange += HandleMovieStateChanged;
     }
 

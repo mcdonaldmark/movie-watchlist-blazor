@@ -1,5 +1,4 @@
 * {
-    border: none !important;
     box-sizing: border-box;
 }
 
@@ -91,13 +90,32 @@ input::placeholder {
     background: #ffd633 !important;
 }
 
+/* Accessibility fix for genre buttons */
+.btn-outline-primary {
+    color: #66b3ff !important;
+    border: 2px solid #66b3ff !important;
+    background: transparent !important;
+    font-weight: 500;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary.active {
+    background: #66b3ff !important;
+    color: #111111 !important;
+    border-color: #66b3ff !important;
+}
+
+/* Accessibility fix for Add to Watchlist buttons */
 .btn-dashboard {
-    background-color: #4da3ff;
-    color: #ffffff;
+    background-color: #0056b3 !important;
+    color: #ffffff !important;
+    font-weight: 600;
 }
 
 .btn-dashboard:hover {
-    background-color: #3b8ee6;
+    background-color: #004494 !important;
+    color: #ffffff !important;
 }
 
 .badge.bg-success {
@@ -112,7 +130,6 @@ input::placeholder {
 .app-shell {
     display: flex;
     flex-direction: column;
-    /* MOBILE DEFAULT */
     min-height: 100vh;
 }
 
