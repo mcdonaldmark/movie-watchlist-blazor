@@ -1,7 +1,9 @@
 @page "/movie/{Id:int}"
+@rendermode InteractiveServer
 @using movie_watchlist_blazor.Models
 @using movie_watchlist_blazor.Services
 @inject NavigationManager NavManager
+@inject AppState AppState
 @inject IMovieService MovieService
 
 <div class="page-center">
@@ -13,46 +15,150 @@
         }
         else
         {
+            <!-- MOVIE INFO -->
             <div class="card p-3 mb-3">
 
                 <h3>@movie.Title</h3>
+
                 <p class="text-muted">
                     @movie.Genre • @(!string.IsNullOrEmpty(movie.ReleaseDate) ? movie.ReleaseDate : movie.Year.ToString())
                 </p>
 
-                @if (MovieState.WatchedMovieIds.Contains(movie.Id))
-                {
-                    <span class="badge bg-success">Watched</span>
-                }
-                else
-                {
-                    <span class="badge bg-warning text-dark">Not Watched</span>
-                }
-
                 <div class="mt-2 mb-3">
                     @for (int i = 1; i <= 5; i++)
                     {
-                        <span>
-                            @(i <= Math.Round(movie.AverageRating) ? "⭐" : "☆")
-                        </span>
+                        <span>@(i <= Math.Round(movie.AverageRating) ? "⭐" : "☆")</span>
                     }
                 </div>
 
                 <p>@movie.Overview</p>
 
-                <div class="mt-3">
-                    <button class="btn btn-success w-100" @onclick="ToggleWatched">
-                        @(MovieState.WatchedMovieIds.Contains(movie.Id) ? "Unwatch" : "Mark Watched")
-                    </button>
-                </div>
-
+                <button class="btn btn-success w-100" @onclick="ToggleWatched">
+                    @(MovieState.WatchedMovieIds.Contains(movie.Id) ? "Unwatch" : "Mark Watched")
+                </button>
             </div>
 
+            <!-- TRAILER -->
             <div class="card p-3 mb-3">
                 <h5>🎥 Trailer</h5>
 
-                <iframe width="100%" height="500" src="@TrailerUrl" frameborder="0" allowfullscreen>
+                <iframe width="100%" height="400" src="@TrailerUrl" frameborder="0" allowfullscreen>
                 </iframe>
+            </div>
+
+            <!-- REVIEWS -->
+            <div class="card p-3 mb-3">
+                <h5>⭐ Reviews</h5>
+
+                <!-- ADD REVIEW -->
+                <div class="mb-3">
+                    <textarea class="form-control mb-2" placeholder="Write your review..." @bind="newReview.Comment"
+                              @bind:event="oninput">
+                    </textarea>
+
+                    <div class="btn-group mb-2">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            var star = i;
+
+                            <button type="button" @key="star"
+                                    class="btn btn-sm @(newReview.Rating >= star ? "btn-warning" : "btn-outline-secondary")"
+                                    @onclick="() => SetRating(star)">
+                                @(newReview.Rating >= star ? "★" : "☆")
+                            </button>
+                        }
+                    </div>
+
+                    <button class="btn btn-success w-100" @onclick="SubmitReview" disabled="@(!CanSubmitReview)">
+                        Submit Review
+                    </button>
+
+                    @if (!CanSubmitReview)
+                    {
+                        <div class="small text-danger mt-2">
+                            Write a comment and select rating.
+                        </div>
+                    }
+                </div>
+
+                <hr />
+
+                <!-- LIST REVIEWS -->
+                @if (reviews == null || !reviews.Any())
+                {
+                    <p class="text-muted">No reviews yet.</p>
+                }
+                else
+                {
+                    @foreach (var r in reviews)
+                    {
+                        <div class="border rounded p-2 mb-2">
+
+                            @if (editingReviewId == r.Id)
+                            {
+                                <textarea class="form-control mb-2" @bind="editModel.Comment" @bind:event="oninput">
+                                </textarea>
+
+                                <div class="btn-group mb-2">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        var star = i;
+
+                                        <button type="button" @key="star"
+                                                class="btn btn-sm @(editModel.Rating >= star ? "btn-warning" : "btn-outline-secondary")"
+                                                @onclick="() => SetEditRating(star)">
+                                            @(editModel.Rating >= star ? "★" : "☆")
+                                        </button>
+                                    }
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary btn-sm" @onclick="() => SaveEdit(r.Id)">
+                                        Save
+                                    </button>
+
+                                    <button class="btn btn-secondary btn-sm" @onclick="CancelEdit">
+                                        Cancel
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <strong>
+                                    @r.UserName
+                                    @if (r.CreatedBy == AppState.CurrentUserId)
+                                    {
+                                        <span class="text-muted"> (You)</span>
+                                    }
+                                </strong>
+                                <div>
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <span>@(i <= r.Rating ? "⭐" : "☆")</span>
+                                    }
+                                </div>
+
+                                <p class="mb-0">@r.Comment</p>
+
+                                @if (r.CreatedBy == AppState.CurrentUserId)
+                                {
+                                    <div class="mt-2 d-flex gap-2">
+
+                                        <button class="btn btn-warning btn-sm" @onclick="() => StartEdit(r)">
+                                            Edit
+                                        </button>
+
+                                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteReview(r.Id)">
+                                            Delete
+                                        </button>
+
+                                    </div>
+                                }
+                            }
+
+                        </div>
+                    }
+                }
             </div>
         }
 
@@ -65,9 +171,76 @@
 
     private MovieDto? movie;
 
+    private List<ReviewDto> reviews = new();
+
+    private ReviewDto newReview = new();
+    private int? editingReviewId;
+    private ReviewDto editModel = new();
+
+    private bool CanSubmitReview =>
+        newReview.Rating >= 1 &&
+        newReview.Rating <= 5 &&
+        !string.IsNullOrWhiteSpace(newReview.Comment);
+
     protected override async Task OnInitializedAsync()
     {
         movie = await MovieService.GetMovieByIdAsync(Id);
+        reviews = await MovieService.GetReviewsAsync(Id);
+    }
+
+    private void SetRating(int rating)
+    {
+        newReview.Rating = rating;
+    }
+
+    private void SetEditRating(int rating)
+    {
+        editModel.Rating = rating;
+    }
+
+    private async Task SubmitReview()
+    {
+        if (movie == null) return;
+
+        newReview.UserName = AppState.CurrentUserName;
+        newReview.CreatedBy = AppState.CurrentUserId;
+
+        await MovieService.AddReviewAsync(movie.Id, newReview);
+
+        newReview = new ReviewDto();
+        reviews = await MovieService.GetReviewsAsync(movie.Id);
+    }
+
+    private void StartEdit(ReviewDto review)
+    {
+        editingReviewId = review.Id;
+
+        editModel = new ReviewDto
+        {
+            Id = review.Id,
+            Comment = review.Comment,
+            Rating = review.Rating
+        };
+    }
+
+    private async Task SaveEdit(int reviewId)
+    {
+        editModel.Id = reviewId;
+
+        await MovieService.UpdateReviewAsync(Id, editModel);
+
+        editingReviewId = null;
+        reviews = await MovieService.GetReviewsAsync(Id);
+    }
+    private void CancelEdit()
+    {
+        editingReviewId = null;
+    }
+
+    private async Task DeleteReview(int reviewId)
+    {
+        await MovieService.DeleteReviewAsync(Id, reviewId);
+        reviews = await MovieService.GetReviewsAsync(Id);
     }
 
     private void ToggleWatched()

@@ -72,6 +72,10 @@ public class MockMovieService : IMovieService
         review.Id = _reviewIdCounter++;
         review.MovieId = movieId;
 
+        // 🔥 USER INFO SAFETY
+        if (string.IsNullOrWhiteSpace(review.UserName))
+            review.UserName = "User";
+
         _reviews[movieId].Add(review);
 
         UpdateAverageRating(movieId);
@@ -87,6 +91,10 @@ public class MockMovieService : IMovieService
 
             if (existing != null)
             {
+                // 🔒 ONLY OWNER CAN EDIT
+                if (existing.UserName != review.UserName)
+                    return Task.CompletedTask;
+
                 existing.Comment = review.Comment;
                 existing.Rating = review.Rating;
 

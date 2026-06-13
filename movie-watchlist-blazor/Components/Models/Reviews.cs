@@ -16,20 +16,23 @@ namespace movie_watchlist_blazor.Models
         public int MovieRating { get; set; }
 
         [Required]
-        public int MovieId {get; set; }
+        public int MovieId { get; set; }
 
 
         // Reviewer/User Details
         [Required]
-        public int CreatedBy {get; set;}
+        public int CreatedBy { get; set; }
+        [Required]
+
+        public string UserName { get; set; } = string.Empty;
         public int? ModifiedBy { get; set; }
 
         // Posting Dates
         [Required]
-        public DateTime CreateDate {get; set;} = DateTime.UtcNow;
-        public DateTime ModifyDate {get; set;} = DateTime.UtcNow;
+        public DateTime CreateDate { get; set; } = DateTime.UtcNow;
+        public DateTime ModifyDate { get; set; } = DateTime.UtcNow;
 
         //An option to not delete reviews but keep them on file and filter them out
-        public bool IsDeleted {get; set;} 
+        public bool IsDeleted { get; set; }
     }
 }

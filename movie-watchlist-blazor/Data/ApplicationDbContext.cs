@@ -11,5 +11,6 @@ namespace movie_watchlist_blazor.Data
         }
 
         public DbSet<AppUser> Users { get; set; }
+        public DbSet<Review> Reviews { get; set; }
     }
 }

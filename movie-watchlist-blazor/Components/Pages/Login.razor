@@ -63,8 +63,7 @@
             return;
         }
 
-        await AppState.SetUserAsync(user.Name);
-
+        await AppState.SetUserAsync(user.Id, user.Name);
         NavManager.NavigateTo("/dashboard");
     }
 }

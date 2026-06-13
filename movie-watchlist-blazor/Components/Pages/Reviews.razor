@@ -2,6 +2,8 @@
 @using movie_watchlist_blazor.Models
 @using movie_watchlist_blazor.Services
 @inject IMovieService MovieService
+@inject AppState AppState
+
 @rendermode InteractiveServer
 
 <div class="page-center">
@@ -95,7 +97,13 @@
                         }
                         else
                         {
-                            <strong>@r.UserName</strong>
+                            <strong>
+                                @r.UserName
+                                @if (r.CreatedBy == AppState.CurrentUserId)
+                                {
+                                    <span class="text-muted"> (You)</span>
+                                }
+                            </strong>
                             <p>@r.Comment</p>
                             <div>⭐ @r.Rating</div>
 

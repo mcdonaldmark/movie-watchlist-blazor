@@ -4,24 +4,34 @@ using System.Net.Http;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using movie_watchlist_blazor.Models;
+using movie_watchlist_blazor.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace movie_watchlist_blazor.Services;
 
 public class TmdbMovieService : IMovieService
 {
+    private readonly ApplicationDbContext _db;
+    private readonly AppState _appState;
     private readonly HttpClient _http;
     private readonly string _apiKey;
 
-    private readonly Dictionary<int, List<ReviewDto>> _reviews = new();
-    private readonly List<int> _watchlist = new();
-    private int _reviewIdCounter = 1;
-
     private readonly Dictionary<int, string> _genreMap = new();
 
-    public TmdbMovieService(HttpClient http, IConfiguration config)
+    public TmdbMovieService(
+    HttpClient http,
+    IConfiguration config,
+    ApplicationDbContext db,
+    AppState appState)
     {
         _http = http;
         _apiKey = config["TMDB:ApiKey"] ?? string.Empty;
+        _db = db;
+        _appState = appState;
+    }
+    public Task AddToWatchlistAsync(int movieId)
+    {
+        return Task.CompletedTask;
     }
 
     private async Task EnsureGenresAsync()
@@ -32,6 +42,7 @@ public class TmdbMovieService : IMovieService
         if (!res.IsSuccessStatusCode) return;
 
         using var doc = JsonDocument.Parse(await res.Content.ReadAsStringAsync());
+
         if (doc.RootElement.TryGetProperty("genres", out var arr))
         {
             foreach (var g in arr.EnumerateArray())
@@ -46,7 +57,10 @@ public class TmdbMovieService : IMovieService
     public async Task<List<GenreDto>> GetGenresAsync()
     {
         await EnsureGenresAsync();
-        return _genreMap.Select(g => new GenreDto { Id = g.Key, Name = g.Value }).OrderBy(g => g.Name).ToList();
+        return _genreMap
+            .Select(g => new GenreDto { Id = g.Key, Name = g.Value })
+            .OrderBy(g => g.Name)
+            .ToList();
     }
 
     public async Task<List<MovieDto>> GetMoviesAsync(int page = 1, int? genreId = null)
@@ -63,6 +77,7 @@ public class TmdbMovieService : IMovieService
         using var doc = JsonDocument.Parse(await res.Content.ReadAsStringAsync());
 
         var list = new List<MovieDto>();
+
         if (doc.RootElement.TryGetProperty("results", out var results))
         {
             foreach (var r in results.EnumerateArray())
@@ -73,23 +88,25 @@ public class TmdbMovieService : IMovieService
                 var poster = r.GetProperty("poster_path").GetString();
                 var backdrop = r.GetProperty("backdrop_path").GetString();
                 var vote = r.GetProperty("vote_average").GetDouble();
+
                 var release = r.TryGetProperty("release_date", out var rd) ? rd.GetString() : string.Empty;
                 var year = 0;
+
                 if (!string.IsNullOrEmpty(release) && release.Length >= 4)
                     int.TryParse(release.Substring(0, 4), out year);
 
                 var genreName = string.Empty;
                 var genreIds = new List<int>();
+
                 if (r.TryGetProperty("genre_ids", out var gids))
                 {
                     foreach (var gid in gids.EnumerateArray())
                     {
                         var gidv = gid.GetInt32();
                         genreIds.Add(gidv);
+
                         if (string.IsNullOrEmpty(genreName) && _genreMap.TryGetValue(gidv, out var gname))
-                        {
                             genreName = gname;
-                        }
                     }
                 }
 
@@ -116,7 +133,10 @@ public class TmdbMovieService : IMovieService
     {
         await EnsureGenresAsync();
 
-        var res = await _http.GetAsync($"movie/{movieId}?api_key={_apiKey}&language=en-US&append_to_response=videos");
+        var res = await _http.GetAsync(
+            $"movie/{movieId}?api_key={_apiKey}&language=en-US&append_to_response=videos"
+        );
+
         if (!res.IsSuccessStatusCode) return null;
 
         using var doc = JsonDocument.Parse(await res.Content.ReadAsStringAsync());
@@ -127,34 +147,40 @@ public class TmdbMovieService : IMovieService
         var poster = root.GetProperty("poster_path").GetString();
         var backdrop = root.GetProperty("backdrop_path").GetString();
         var vote = root.GetProperty("vote_average").GetDouble();
+
         var release = root.TryGetProperty("release_date", out var rd) ? rd.GetString() : null;
         var year = 0;
+
         if (!string.IsNullOrEmpty(release) && release.Length >= 4)
             int.TryParse(release.Substring(0, 4), out year);
 
         var genreName = string.Empty;
         var genreIds = new List<int>();
+
         if (root.TryGetProperty("genres", out var genres))
         {
             foreach (var g in genres.EnumerateArray())
             {
                 var id = g.GetProperty("id").GetInt32();
                 genreIds.Add(id);
+
                 if (string.IsNullOrEmpty(genreName))
-                {
                     genreName = g.GetProperty("name").GetString() ?? string.Empty;
-                }
             }
         }
 
         var trailerKey = string.Empty;
-        if (root.TryGetProperty("videos", out var videos) && videos.TryGetProperty("results", out var vids))
+
+        if (root.TryGetProperty("videos", out var videos) &&
+            videos.TryGetProperty("results", out var vids))
         {
             foreach (var v in vids.EnumerateArray())
             {
                 var site = v.GetProperty("site").GetString();
                 var type = v.GetProperty("type").GetString();
-                if (string.Equals(site, "YouTube", StringComparison.OrdinalIgnoreCase) && string.Equals(type, "Trailer", StringComparison.OrdinalIgnoreCase))
+
+                if (string.Equals(site, "YouTube", StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(type, "Trailer", StringComparison.OrdinalIgnoreCase))
                 {
                     trailerKey = v.GetProperty("key").GetString() ?? string.Empty;
                     break;
@@ -178,70 +204,70 @@ public class TmdbMovieService : IMovieService
         };
     }
 
-    // ================= REVIEWS & WATCHLIST (in-memory, same behavior as MockMovieService)
+    // ================= REVIEWS (POSTGRESQL / EF CORE)
 
-    public Task AddToWatchlistAsync(int movieId)
+    public async Task<List<ReviewDto>> GetReviewsAsync(int movieId)
     {
-        if (!_watchlist.Contains(movieId))
-            _watchlist.Add(movieId);
-        return Task.CompletedTask;
+        return await _db.Reviews
+            .Where(r => r.MovieId == movieId && !r.IsDeleted)
+            .Join(
+                _db.Users,
+                review => review.CreatedBy,
+                user => user.Id,
+                (review, user) => new ReviewDto
+                {
+                    Id = (int)review.ReviewId,
+                    MovieId = review.MovieId,
+                    CreatedBy = review.CreatedBy,
+                    UserName = user.Name,
+                    Comment = review.ReviewContent,
+                    Rating = review.MovieRating
+                })
+            .ToListAsync();
     }
 
-    public Task<List<ReviewDto>> GetReviewsAsync(int movieId)
+    public async Task AddReviewAsync(int movieId, ReviewDto review)
     {
-        _reviews.TryGetValue(movieId, out var list);
-        return Task.FromResult(list ?? new List<ReviewDto>());
-    }
-
-    public Task AddReviewAsync(int movieId, ReviewDto review)
-    {
-        if (!_reviews.ContainsKey(movieId))
-            _reviews[movieId] = new List<ReviewDto>();
-
-        review.Id = _reviewIdCounter++;
-        review.MovieId = movieId;
-        _reviews[movieId].Add(review);
-
-        UpdateAverageRating(movieId);
-
-        return Task.CompletedTask;
-    }
-
-    public Task UpdateReviewAsync(int movieId, ReviewDto review)
-    {
-        if (_reviews.TryGetValue(movieId, out var list))
+        var entity = new Review
         {
-            var existing = list.FirstOrDefault(r => r.Id == review.Id);
-            if (existing != null)
-            {
-                existing.Comment = review.Comment;
-                existing.Rating = review.Rating;
-                UpdateAverageRating(movieId);
-            }
-        }
-        return Task.CompletedTask;
+            MovieId = movieId,
+            ReviewTitle = review.Comment.Length > 20
+                ? review.Comment.Substring(0, 20)
+                : review.Comment,
+
+            ReviewContent = review.Comment,
+            MovieRating = review.Rating,
+            CreatedBy = _appState.CurrentUserId,
+            CreateDate = DateTime.UtcNow,
+            ModifyDate = DateTime.UtcNow,
+            IsDeleted = false
+        };
+
+        _db.Reviews.Add(entity);
+        await _db.SaveChangesAsync();
     }
 
-    public Task DeleteReviewAsync(int movieId, int reviewId)
+    public async Task UpdateReviewAsync(int movieId, ReviewDto reviewDto)
     {
-        if (_reviews.TryGetValue(movieId, out var list))
-        {
-            var review = list.FirstOrDefault(r => r.Id == reviewId);
-            if (review != null)
-            {
-                list.Remove(review);
-                UpdateAverageRating(movieId);
-            }
-        }
-        return Task.CompletedTask;
+        var review = await _db.Reviews
+            .FirstOrDefaultAsync(r => r.ReviewId == reviewDto.Id && r.MovieId == movieId);
+
+        if (review == null) return;
+
+        review.ReviewContent = reviewDto.Comment;
+        review.MovieRating = reviewDto.Rating;
+
+        await _db.SaveChangesAsync();
     }
 
-    private void UpdateAverageRating(int movieId)
+    public async Task DeleteReviewAsync(int movieId, int reviewId)
     {
-        if (!_reviews.TryGetValue(movieId, out var list) || list.Count == 0)
-            return;
+        var review = await _db.Reviews
+            .FirstOrDefaultAsync(r => r.ReviewId == reviewId && r.MovieId == movieId);
 
-        var avg = list.Average(r => r.Rating);
-        // No local movie list to update average on; reviews are stored separately.
+        if (review == null) return;
+
+        _db.Reviews.Remove(review);
+        await _db.SaveChangesAsync();
     }
 }

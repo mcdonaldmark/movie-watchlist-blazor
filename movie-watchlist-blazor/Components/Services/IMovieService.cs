@@ -17,5 +17,6 @@ public interface IMovieService
     Task AddReviewAsync(int movieId, ReviewDto review);
 
     Task UpdateReviewAsync(int movieId, ReviewDto review);
+
     Task DeleteReviewAsync(int movieId, int reviewId);
 }

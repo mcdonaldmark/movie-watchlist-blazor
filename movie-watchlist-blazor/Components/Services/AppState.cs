@@ -17,16 +17,19 @@ public class AppState
     }
 
     public string CurrentUserName { get; private set; } = "";
+    public int CurrentUserId { get; private set; }
 
     public event Action? OnChange;
 
     private void NotifyStateChanged()
         => OnChange?.Invoke();
 
-    public async Task SetUserAsync(string name)
+    public async Task SetUserAsync(int id, string name)
     {
+        CurrentUserId = id;
         CurrentUserName = name ?? "";
 
+        await _js.InvokeVoidAsync("sessionStorage.setItem", "userId", id);
         await _js.InvokeVoidAsync("sessionStorage.setItem", "user", CurrentUserName);
 
         NotifyStateChanged();
@@ -38,6 +41,17 @@ public class AppState
         {
             var name = await _js.InvokeAsync<string>("sessionStorage.getItem", "user");
             CurrentUserName = string.IsNullOrWhiteSpace(name) ? "" : name;
+
+            var userIdString = await _js.InvokeAsync<string>("sessionStorage.getItem", "userId");
+
+            if (int.TryParse(userIdString, out var userId))
+            {
+                CurrentUserId = userId;
+            }
+            else
+            {
+                CurrentUserId = 0;
+            }
         }
         catch
         {
@@ -105,8 +119,10 @@ public class AppState
     public async Task LogoutAsync()
     {
         CurrentUserName = "";
+        CurrentUserId = 0;
 
         await _js.InvokeVoidAsync("sessionStorage.removeItem", "user");
+        await _js.InvokeVoidAsync("sessionStorage.removeItem", "userId");
 
         NotifyStateChanged();
     }
