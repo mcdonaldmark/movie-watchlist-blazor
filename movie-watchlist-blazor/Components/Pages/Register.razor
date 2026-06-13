@@ -8,6 +8,8 @@
 @inject NavigationManager NavManager
 @inject ApplicationDbContext Db
 
+@* Page to allow the user to create an account so that they can access the application *@
+
 <div class="page-center">
     <div class="auth-card">
 
@@ -41,6 +43,7 @@
 </div>
 
 @code {
+    @* temporary data that can be stored before the user enters their own data for their account *@
     private string name = "";
     private string email = "";
     private string password = "";
@@ -59,6 +62,7 @@
             return;
         }
 
+        @* Fail safe to ensure that a duplicate account isn't created in the applictaion *@
         var exists = Db.Users.Any(u => u.Email == email);
 
         if (exists)
@@ -67,6 +71,7 @@
             return;
         }
 
+        @* Assuming the user doesn't already exist, an account is created *@
         var user = new AppUser
         {
             Name = name,

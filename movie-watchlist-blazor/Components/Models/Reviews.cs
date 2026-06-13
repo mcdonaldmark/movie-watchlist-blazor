@@ -4,6 +4,8 @@ namespace movie_watchlist_blazor.Models
 {
     public class Review
     {
+        // Database model that specifies the different info that is needed if a user is wanting to leave a review
+        // On a movie that they've specified.
         [Key]
         public long ReviewId { get; set; }
         [Required]

@@ -4,6 +4,8 @@
 @inject IMovieService MovieService
 @rendermode InteractiveServer
 
+@* Page so that the user can add a review to a movie that they specify *@
+
 <div class="page-center">
     <div class="dashboard-wrapper w-100">
 
@@ -18,6 +20,7 @@
 
             <div class="card p-3 mb-4 shadow-sm">
                 <h5>@movie.Title</h5>
+                @* Displays the movie genre and year *@
                 <p class="text-muted">@movie.Genre • @movie.Year</p>
             </div>
 
@@ -48,6 +51,7 @@
                 <button type="button" class="btn btn-success w-100" @onclick="AddReview" disabled="@(!CanSubmitReview)">
                     Submit
                 </button>
+                @* Failsafe incase the user isn't able to submit a review *@
                 @if (!CanSubmitReview)
                 {
                     <div class="small text-danger mt-2">
@@ -56,6 +60,7 @@
                 }
             </div>
 
+            @* If no reviews exists yet then a message is displayed to the user *@
             @if (!reviews.Any())
             {
                 <p class="text-center">No reviews yet.</p>
@@ -122,6 +127,7 @@
 
 @code {
 
+    @* Temporary data to store various info on the movie review before saving *@
     [Parameter] public int MovieId { get; set; }
 
     private MovieDto? movie;

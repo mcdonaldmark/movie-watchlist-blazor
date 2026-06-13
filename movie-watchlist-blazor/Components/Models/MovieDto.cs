@@ -1,6 +1,7 @@
 namespace movie_watchlist_blazor.Models;
 
 public class MovieDto
+// Model data that is needed for the different movies that are shown to the user
 {
     public int Id { get; set; }
 

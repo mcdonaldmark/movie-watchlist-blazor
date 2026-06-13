@@ -3,6 +3,7 @@
     namespace movie_watchlist_blazor.Models
     {
         public class AppUser
+        // Model to define info that is needed from the user if they want to create a profile within the applciation
         {
             [Key]
             public int Id { get; set; }

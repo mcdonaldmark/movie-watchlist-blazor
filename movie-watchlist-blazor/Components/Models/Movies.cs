@@ -4,6 +4,8 @@ namespace movie_watchlist_blazor.Models;
 
 public class Movie
 {
+    // Different model data that is needed for the variouse movies that are used using the CRUD protocol
+    // So that it can be saved in the database
     [Key]
     public int MovieId { get; set; }
 

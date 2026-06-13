@@ -8,6 +8,8 @@
 @rendermode InteractiveServer
 @implements IDisposable
 
+@* Main dashbaord page that is shown to the user when they login *@
+
 <div class="dashboard-wrapper">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -27,6 +29,7 @@
             </p>
         </div>
 
+        @* Allows the user to add a movie to their list *@
         <button type="button" class="btn btn-primary" @onclick="GoToMovies">
             + Add Movie
         </button>
@@ -56,6 +59,7 @@
     </div>
 
     <!-- DASHBOARD STATS -->
+    @* Shows how many movies have been added to the watch list or watched list for the user *@
     <div class="row mb-4">
 
         <div class="col-md-6 mb-2">
@@ -78,7 +82,7 @@
         var watchlist = GetFilteredMovies(MovieState.Movies.Where(m => !MovieState.IsWatched(m.Id)));
         var watched = GetFilteredMovies(MovieState.Movies.Where(m => MovieState.IsWatched(m.Id)));
     }
-
+    @* Displays the users watchlist of movies they have already watched *@
     <div class="row">
         <div class="col-lg-6 mb-4">
             <h2>Watchlist</h2>
@@ -136,6 +140,7 @@
             }
         </div>
 
+        @* List to display all of the different movies that the user has watched *@
         <div class="col-lg-6 mb-4">
             <h2>Watched</h2>
 
@@ -164,12 +169,12 @@
 
                                             <p class="text-muted mb-1">@m.Genre • @m.Year</p>
 
-                                            <div class="mb-2">
+                                            @* <div class="mb-2">
                                                 @for (int i = 1; i <= 5; i++)
                                                 {
                                                     <span>@(i <= Math.Round(m.AverageRating) ? "⭐" : "☆")</span>
                                                 }
-                                            </div>
+                                            </div> *@
 
                                             <div class="mt-auto d-flex gap-2">
                                                 <button type="button" class="btn btn-secondary btn-sm flex-grow-1"
@@ -197,6 +202,8 @@
 
 @code {
 
+    @* Temporary data for the different searchText and genres that the user are wanting to look at *@
+
     private string searchText = "";
     private string selectedGenre = "";
 
@@ -214,11 +221,13 @@ StringComparison.OrdinalIgnoreCase) == true);
         return matchesSearch && matchesGenre;
     }
 
+    @* Returns a list of filtered movies that the user has specified *@
     private List<MovieDto> GetFilteredMovies(IEnumerable<MovieDto> movies)
     {
         return movies.Where(MovieMatchesFilter).ToList();
     }
 
+    @* Shows all of the available genres that are available to the user *@
     private IEnumerable<string> AvailableGenres => MovieState.Movies
         .SelectMany(m => (m.Genre ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries))
         .Select(g => g.Trim())
