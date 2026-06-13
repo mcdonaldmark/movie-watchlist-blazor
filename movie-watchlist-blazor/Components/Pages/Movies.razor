@@ -160,6 +160,7 @@
     private void ToggleWatched(int id)
     {
         var movieObj = movies.FirstOrDefault(m => m.Id == id);
+
         if (movieObj != null && !MovieState.Movies.Any(m => m.Id == id))
         {
             MovieState.AddMovie(movieObj);

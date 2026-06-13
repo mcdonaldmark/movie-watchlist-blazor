@@ -59,7 +59,7 @@
         <div class="col-md-6 mb-2">
             <div class="card p-3 text-center">
                 <h6>🎬 Watch list</h6>
-                <h3>@MovieState.Movies.Count</h3>
+                <h3>@MovieState.Movies.Count(m => !MovieState.IsWatched(m.Id))</h3>
             </div>
         </div>
 
