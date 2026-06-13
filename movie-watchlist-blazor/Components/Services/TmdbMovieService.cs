@@ -5,10 +5,14 @@ using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using movie_watchlist_blazor.Models;
 
+// Displays movies to the user from a third-party API system so that the user can have a wide
+// range of different movies that they can choose from
+
 namespace movie_watchlist_blazor.Services;
 
 public class TmdbMovieService : IMovieService
 {
+    // Temporary in memory data for the movie info which will be sent to the database later
     private readonly HttpClient _http;
     private readonly string _apiKey;
 
@@ -24,6 +28,8 @@ public class TmdbMovieService : IMovieService
         _apiKey = config["TMDB:ApiKey"] ?? string.Empty;
     }
 
+    // Pulls the genres of the different movies from the API and so that they can be
+    // displayed to the user. Maps out both the id and the name of the movie for the user
     private async Task EnsureGenresAsync()
     {
         if (_genreMap.Any()) return;
@@ -49,6 +55,8 @@ public class TmdbMovieService : IMovieService
         return _genreMap.Select(g => new GenreDto { Id = g.Key, Name = g.Value }).OrderBy(g => g.Name).ToList();
     }
 
+    // Pulls the movies from the API and parses them so that they can be displayed to the user
+    // Displays info on each movie as it loops through the entire list of movies by their genre
     public async Task<List<MovieDto>> GetMoviesAsync(int page = 1, int? genreId = null)
     {
         await EnsureGenresAsync();
@@ -112,6 +120,8 @@ public class TmdbMovieService : IMovieService
         return list;
     }
 
+    // Gets relevant info about the movies to display to the user such as title, overview, release_date, etc
+    // So that the user has more info about the movies they can add to their watchlist
     public async Task<MovieDto?> GetMovieByIdAsync(int movieId)
     {
         await EnsureGenresAsync();
@@ -162,6 +172,8 @@ public class TmdbMovieService : IMovieService
             }
         }
 
+        // Returns a movie to display to the user with all of the relevant info so that the user
+        // can view details about the movie they want to add to their watchlist
         return new MovieDto
         {
             Id = movieId,
@@ -193,6 +205,7 @@ public class TmdbMovieService : IMovieService
         return Task.FromResult(list ?? new List<ReviewDto>());
     }
 
+    // Function to add a review to a movie so that the review can be seen by others
     public Task AddReviewAsync(int movieId, ReviewDto review)
     {
         if (!_reviews.ContainsKey(movieId))
@@ -207,6 +220,7 @@ public class TmdbMovieService : IMovieService
         return Task.CompletedTask;
     }
 
+    // Function to update a review that a user wants to edit and save so that others can see
     public Task UpdateReviewAsync(int movieId, ReviewDto review)
     {
         if (_reviews.TryGetValue(movieId, out var list))
@@ -222,6 +236,7 @@ public class TmdbMovieService : IMovieService
         return Task.CompletedTask;
     }
 
+    // Function to delete a review from a movie that a user selects
     public Task DeleteReviewAsync(int movieId, int reviewId)
     {
         if (_reviews.TryGetValue(movieId, out var list))
@@ -236,6 +251,7 @@ public class TmdbMovieService : IMovieService
         return Task.CompletedTask;
     }
 
+    // Updates the average rating for the movie that is shown to the user
     private void UpdateAverageRating(int movieId)
     {
         if (!_reviews.TryGetValue(movieId, out var list) || list.Count == 0)

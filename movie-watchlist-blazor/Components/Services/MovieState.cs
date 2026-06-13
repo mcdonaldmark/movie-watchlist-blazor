@@ -14,6 +14,7 @@ public static class MovieState
 
     private static void NotifyStateChanged() => OnChange?.Invoke();
 
+    // Toggles in the users dashboard if the movie has been watched
     public static void ToggleWatched(int movieId)
     {
         if (WatchedMovieIds.Contains(movieId))
@@ -23,9 +24,11 @@ public static class MovieState
         NotifyStateChanged();
     }
 
+    // Moves the movie ID into a list once the user specifies that they've watched the movie
     public static bool IsWatched(int movieId)
         => WatchedMovieIds.Contains(movieId);
 
+    // Adds a movie to the users list
     public static void AddMovie(MovieDto movie)
     {
         if (!Movies.Any(m => m.Id == movie.Id))
@@ -35,12 +38,14 @@ public static class MovieState
         }
     }
 
+    // Sets the movies into a list for the user
     public static void SetMovies(List<MovieDto> movies)
     {
         Movies = movies ?? new List<MovieDto>();
         NotifyStateChanged();
     }
 
+    // Removes a movie from the users dashboard
     public static void RemoveMovie(int movieId)
     {
         Movies.RemoveAll(m => m.Id == movieId);

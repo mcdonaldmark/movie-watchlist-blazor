@@ -23,6 +23,8 @@ public class AppState
     private void NotifyStateChanged()
         => OnChange?.Invoke();
 
+    // Sets the users current username using local storage on the device.
+    // Gets the users name or returns and empty set of strings if no name exists
     public async Task SetUserAsync(string name)
     {
         CurrentUserName = name ?? "";
@@ -34,6 +36,8 @@ public class AppState
 
     public async Task LoadUserAsync()
     {
+        // First tries to load a users name, but will return an empty set of strings
+        // if there is no name that is returned from the users local storage
         try
         {
             var name = await _js.InvokeAsync<string>("sessionStorage.getItem", "user");
@@ -64,6 +68,7 @@ public class AppState
 
     public async Task SaveMoviesAsync()
     {
+        // First tries to set the users movie into local storage so that it can be parsed by JSON
         try
         {
             var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
@@ -78,6 +83,8 @@ public class AppState
 
     public async Task LoadMoviesAsync()
     {
+        // try/catch block to load the users movie data from their local storage.
+        // Gets the movies and loads them into the app so that the user can view them
         try
         {
             var json = await _js.InvokeAsync<string>("sessionStorage.getItem", "movies");
@@ -104,6 +111,7 @@ public class AppState
 
     public async Task LogoutAsync()
     {
+        // Ensures that the user has successfully logged out of the application
         CurrentUserName = "";
 
         await _js.InvokeVoidAsync("sessionStorage.removeItem", "user");

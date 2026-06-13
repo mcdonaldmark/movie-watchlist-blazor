@@ -5,6 +5,8 @@
 @inject IMovieService MovieService
 @rendermode InteractiveServer
 
+@* Displays all of the movies to the user to pick from *@
+
 <div class="movies-page">
 
     <div class="dashboard-wrapper w-100 pt-1">
@@ -71,14 +73,14 @@
                                         movie.Year.ToString())
                                     </p>
 
-                                    <div class="mb-2">
+                                    @* <div class="mb-2">
                                         @for (int i = 1; i <= 5; i++)
                                         {
                                             <span>
                                                 @(i <= Math.Round(movie.AverageRating) ? "⭐" : "☆")
                                             </span>
                                         }
-                                    </div>
+                                    </div> *@
 
                                     @if (MovieState.IsWatched(movie.Id))
                                     {
@@ -142,6 +144,8 @@
 
 @code {
 
+    @* Temporary data to store info on the different movies *@
+
     private int? addedMovieId;
     private List<MovieDto> movies = new();
     private Queue<MovieDto> movieBuffer = new();
@@ -151,6 +155,7 @@
     private bool hasMoreMovies = true;
     private bool isLoadingMore;
 
+    // Selects a genre based off of it's ID
     private int? SelectedGenreId => string.IsNullOrEmpty(selectedGenreIdString)
         ? null
         : int.TryParse(selectedGenreIdString, out var id)
@@ -192,39 +197,46 @@
         });
     }
 
+    @* Navigats to a movie review based off it's ID *@
     private void GoToReviews(int movieId)
     {
         NavManager.NavigateTo($"/reviews/{movieId}");
     }
 
+    @* Navigats to a movie based off it's ID *@
     private void GoToMovie(int movieId)
     {
         NavManager.NavigateTo($"/movie/{movieId}");
     }
 
+    @* Loads all of the different genres for the users *@
     private async Task LoadGenresAsync()
     {
         genres = await MovieService.GetGenresAsync();
     }
 
+    @* Allows the user to select a genre for a movei that they want to see *@
     private async Task SelectGenre(int? genreId)
     {
         selectedGenreIdString = genreId?.ToString() ?? string.Empty;
         await ResetMoviesAsync();
     }
 
+    @* Resets the filters on the movies *@
     private async Task ResetFilters()
     {
         selectedGenreIdString = string.Empty;
         await ResetMoviesAsync();
     }
 
+    @* Restets the movies that are shown if the movie filter gets chnaged or reset *@
     private async Task OnGenreChanged(ChangeEventArgs e)
     {
         selectedGenreIdString = e.Value?.ToString() ?? string.Empty;
         await ResetMoviesAsync();
     }
 
+    @* Changes out all of the movies on the screen for the user *@
     private async Task ResetMoviesAsync()
     {
         movies.Clear();
@@ -269,6 +281,7 @@
 
     private async Task LoadMoreMovies()
     {
+        @* Continues to load movies for the user *@
         isLoadingMore = true;
 
         if (!movieBuffer.Any() && hasMoreMovies)

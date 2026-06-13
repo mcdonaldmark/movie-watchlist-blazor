@@ -4,6 +4,7 @@ namespace movie_watchlist_blazor.Services;
 
 public interface IMovieService
 {
+    // In memory data for the different lists that are needed for the application
     Task<List<MovieDto>> GetMoviesAsync(int page = 1, int? genreId = null);
 
     Task<List<GenreDto>> GetGenresAsync();

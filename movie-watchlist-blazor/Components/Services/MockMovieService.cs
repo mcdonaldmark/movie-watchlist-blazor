@@ -4,6 +4,7 @@ namespace movie_watchlist_blazor.Services;
 
 public class MockMovieService : IMovieService
 {
+    // Basic start to a movie list that is included to the user
     private readonly List<MovieDto> _movies = new()
     {
         new MovieDto { Id = 1, Title = "Inception", Genre = "Sci-Fi", GenreIds = new List<int> { 2 }, Year = 2010, AverageRating = 4.8 },
@@ -18,6 +19,7 @@ public class MockMovieService : IMovieService
 
     // ================= MOVIES =================
 
+    // Gets the info on the movies and adds them to a list so that it can be looped through and shown to the user
     public Task<List<MovieDto>> GetMoviesAsync(int page = 1, int? genreId = null)
     {
         var movies = _movies.AsEnumerable();
@@ -30,6 +32,8 @@ public class MockMovieService : IMovieService
         return Task.FromResult(movies.Skip((page - 1) * 20).Take(20).ToList());
     }
 
+    // Has a list of different genres that the user can choose from when looking for a movei to watch
+    // Each genre has it's own ID
     public Task<List<GenreDto>> GetGenresAsync()
     {
         var genres = new List<GenreDto>
@@ -42,12 +46,15 @@ public class MockMovieService : IMovieService
         return Task.FromResult(genres);
     }
 
+    // Gets the movie by their ID and returns it
     public Task<MovieDto?> GetMovieByIdAsync(int movieId)
     {
         var m = _movies.FirstOrDefault(mv => mv.Id == movieId);
         return Task.FromResult<MovieDto?>(m);
     }
 
+    // Adds the movie to a watched list so that the user can see what they've watched
+    // Checks to see if the watchlist already has the movie ID in it
     public Task AddToWatchlistAsync(int movieId)
     {
         if (!_watchlist.Contains(movieId))
@@ -58,12 +65,14 @@ public class MockMovieService : IMovieService
 
     // ================= REVIEWS =================
 
+    // Function to get the reviews that the different users have set
     public Task<List<ReviewDto>> GetReviewsAsync(int movieId)
     {
         _reviews.TryGetValue(movieId, out var list);
         return Task.FromResult(list ?? new List<ReviewDto>());
     }
 
+    // Function to add a review to the movies that are available to the user
     public Task AddReviewAsync(int movieId, ReviewDto review)
     {
         if (!_reviews.ContainsKey(movieId))
@@ -79,6 +88,7 @@ public class MockMovieService : IMovieService
         return Task.CompletedTask;
     }
 
+    // Function to update a review that a user wants to leave on a movie
     public Task UpdateReviewAsync(int movieId, ReviewDto review)
     {
         if (_reviews.TryGetValue(movieId, out var list))
@@ -97,6 +107,7 @@ public class MockMovieService : IMovieService
         return Task.CompletedTask;
     }
 
+    // Function to delete a movie review that the user specifies
     public Task DeleteReviewAsync(int movieId, int reviewId)
     {
         if (_reviews.TryGetValue(movieId, out var list))
@@ -115,6 +126,7 @@ public class MockMovieService : IMovieService
 
     // ================= HELPERS =================
 
+    // A function that will update the average rating of the movie once a review is left by the user
     private void UpdateAverageRating(int movieId)
     {
         if (!_reviews.TryGetValue(movieId, out var list) || list.Count == 0)

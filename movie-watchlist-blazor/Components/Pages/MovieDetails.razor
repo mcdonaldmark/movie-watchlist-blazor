@@ -4,6 +4,8 @@
 @inject NavigationManager NavManager
 @inject IMovieService MovieService
 
+@* Page that will display the different details for the movie that the user is wanting to view *@
+
 <div class="page-center">
     <div class="dashboard-wrapper w-100">
 
@@ -20,6 +22,8 @@
                     @movie.Genre • @(!string.IsNullOrEmpty(movie.ReleaseDate) ? movie.ReleaseDate : movie.Year.ToString())
                 </p>
 
+                @* Movies the movie into the watched list if the ID for the movie is found *@
+                @* Goes off of the movie ID *@
                 @if (MovieState.WatchedMovieIds.Contains(movie.Id))
                 {
                     <span class="badge bg-success">Watched</span>
@@ -29,14 +33,14 @@
                     <span class="badge bg-warning text-dark">Not Watched</span>
                 }
 
-                <div class="mt-2 mb-3">
+                @* <div class="mt-2 mb-3">
                     @for (int i = 1; i <= 5; i++)
                     {
                         <span>
                             @(i <= Math.Round(movie.AverageRating) ? "⭐" : "☆")
                         </span>
                     }
-                </div>
+                </div> *@
 
                 <p>@movie.Overview</p>
 
@@ -61,6 +65,7 @@
 
 @code {
 
+    @* Temporary data that is used to hold the ID for the movie *@
     [Parameter] public int Id { get; set; }
 
     private MovieDto? movie;
@@ -70,6 +75,7 @@
         movie = await MovieService.GetMovieByIdAsync(Id);
     }
 
+    @* Adds or removes the movie from the watched list based off of the movie ID *@
     private void ToggleWatched()
     {
         if (movie == null) return;
@@ -80,6 +86,7 @@
             MovieState.WatchedMovieIds.Add(movie.Id);
     }
 
+    @* Loads the trailer for the movie suing a key that defines which movie is desired *@
     private string TrailerUrl =>
         !string.IsNullOrEmpty(movie?.TrailerKey)
             ? $"https://www.youtube.com/embed/{movie!.TrailerKey}"

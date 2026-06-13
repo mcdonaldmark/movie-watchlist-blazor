@@ -9,6 +9,8 @@
 @inject ApplicationDbContext Db
 @inject AppState AppState
 
+@* Page used when a user goes to log into the application *@
+
 <div class="page-center">
     <div class="auth-card">
 
@@ -39,10 +41,14 @@
 </div>
 
 @code {
+
+    @* Temporary data for the users info while they are entring the requried info *@
     private string email = "";
     private string password = "";
     private string errorMessage = "";
 
+    @* Looks for the email and password from the user. If they are vaild then the user will be able to get logged in *@
+    @* If the info that the user provides is not accurate then an error massage will be shown letting them know they couldn't login *@
     private async Task LoginUser()
     {
         errorMessage = "";
